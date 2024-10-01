@@ -18,8 +18,8 @@ export const NavPlatform = () => {
   return (
     <div className="menu">
       {user?.role == "teacher" && (
-        <Link href={"/admin"}>
-          <div className={`${styles.admin} menuItem`}>Добавить учеников</div>
+        <Link href={"/students"}>
+          <div className="menuItem">Ученики</div>
         </Link>
       )}
       {/* <Link href={"/chat"}>

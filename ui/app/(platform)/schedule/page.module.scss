@@ -60,7 +60,7 @@
   .calendarGrid {
     display: grid;
     grid-template-columns: repeat(7, calc((100% - 5px * 6) / 7));
-    grid-template-rows: 30px repeat(6, calc(55vw / 7));
+    // grid-template-rows: 30px repeat(6, calc(55vw / 7));
     margin-top: 20px;
     gap: 5px;
     padding: 5px;

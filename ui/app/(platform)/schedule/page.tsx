@@ -3,37 +3,42 @@
 import styles from "./page.module.scss";
 import { getDaysInMonth, getFirstDayOfMonth } from "./getDaysInMonth.js";
 import ScheduleMeaning from "./ScheduleMeaning";
-import { dynamicSort } from "./sortArrayByElementsProperty";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/app/store";
-import { useEffect, useState } from "react";
-import { deleteSchedule, getSchedule } from "@/app/features/schedulesSlice";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { getSchedule } from "@/app/features/schedulesSlice";
 import { AddScheduleTabs } from "./AddSchedule";
+import { CalendarNavigation } from "./CalendarNavigation";
+import { Day } from "./Day";
+import { months, weekdays } from "./constants";
 
 const Schedule = () => {
-  const months = [
-    "январь",
-    "февраль",
-    "март",
-    "апрель",
-    "май",
-    "июнь",
-    "июль",
-    "август",
-    "сентябрь",
-    "октябрь",
-    "ноябрь",
-    "декабрь",
-  ];
-
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
 
   const user = useSelector((state: RootState) => state.users.activeUser);
   const schedule = useSelector((state: RootState) => state.schedule.current);
 
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-  const firstDayOfWeek = getFirstDayOfMonth(currentYear, currentMonth);
+  const daysInMonth = useMemo(
+    () => getDaysInMonth(currentYear, currentMonth),
+    [currentYear, currentMonth]
+  );
+  const firstDayOfWeek = useMemo(
+    () => getFirstDayOfMonth(currentYear, currentMonth),
+    [currentYear, currentMonth]
+  );
+
+  // Пустые дни в начале календаря
+  const emptyDaysCount = useMemo(
+    () => (firstDayOfWeek + 6) % 7,
+    [firstDayOfWeek]
+  );
+
+  // Определяем количество строк в календаре
+  const calendarRows = useMemo(
+    () => Math.ceil((daysInMonth + emptyDaysCount) / 7),
+    [daysInMonth, emptyDaysCount]
+  );
 
   const dispatch = useDispatch<AppDispatch>();
 
@@ -43,28 +48,25 @@ const Schedule = () => {
     }
   }, [user, dispatch]);
 
-  const goToNextMonth = () => {
-    if (currentMonth === 11) {
-      setCurrentMonth(0);
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
-  };
+  const goToNextMonth = useCallback(() => {
+    setCurrentMonth((prev) => (prev === 11 ? 0 : prev + 1));
+    setCurrentYear((prev) => (currentMonth === 11 ? prev + 1 : prev)); // Обновляем год при переходе на январь
+  }, [currentMonth]);
 
-  const goToPrevMonth = () => {
-    if (currentMonth === 0) {
-      setCurrentMonth(11);
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
-  };
+  const goToPrevMonth = useCallback(() => {
+    setCurrentMonth((prev) => (prev === 0 ? 11 : prev - 1));
+    setCurrentYear((prev) => (currentMonth === 0 ? prev - 1 : prev)); // Обновляем год при переходе на декабрь
+  }, [currentMonth]);
 
   const generateCalendar = () => {
     const calendar: any = [];
-    const weekdays = ["ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ", "ВС"];
-    const emptyDaysCount = (firstDayOfWeek + 6) % 7;
+
+    const today = new Date();
+
+    const isToday = (day: number) =>
+      day === today.getDate() &&
+      currentMonth === today.getMonth() &&
+      currentYear === today.getFullYear();
 
     // первая строка: названия дней недели
     weekdays.forEach((weekDay, index) => {
@@ -81,27 +83,15 @@ const Schedule = () => {
     }
 
     let dayofweek = emptyDaysCount;
-    for (let day = 1; day <= daysInMonth; day++) {
-      console.log(schedule);
 
-      const permanentEventsForThisDay = schedule.filter((item) => {
+    for (let day = 1; day <= daysInMonth; day++) {
+      const eventsForThisDay = schedule.filter((item) => {
         if (item.type === "permanent") {
           return item.date === weekdays[dayofweek];
-        }
-      });
-
-      const additionalEventsForThisDay = schedule.filter((item) => {
-        if (item.type !== "permanent") {
-          let [eventDay, eventMonth] = item.date.split("-");
-
-          if (eventDay[0] === "0") {
-            eventDay = eventDay[1];
-          }
-
-          if (eventMonth[0] === "0") {
-            eventMonth = eventMonth[1];
-          }
-
+        } else {
+          const [eventDay, eventMonth] = item.date
+            .split("-")
+            .map((v) => v.replace(/^0/, "")); // Убираем ведущие нули
           return (
             day.toString() === eventDay &&
             (currentMonth + 1).toString() === eventMonth
@@ -109,71 +99,18 @@ const Schedule = () => {
         }
       });
 
-      const eventsForThisDay = [
-        ...permanentEventsForThisDay,
-        ...additionalEventsForThisDay,
-      ];
-
       calendar.push(
-        <div
+        <Day
           key={day - 1}
-          className={styles.day}
-          data-week={weekdays[dayofweek]}
-          data-date={day}
-        >
-          <div
-            className={
-              day === new Date().getDate() &&
-              currentMonth === new Date().getMonth() &&
-              currentYear === new Date().getFullYear()
-                ? `${styles.date} ${styles.today}`
-                : styles.date
-            }
-          >
-            {day}
-          </div>
-
-          {eventsForThisDay.sort(dynamicSort("time")).map((item, index) => {
-            const classNames: Record<string, string> = {
-              permanent: styles.permanent,
-              additional: styles.additional,
-              concert: styles.concert,
-            };
-
-            const className = classNames[item.type] || "unknown";
-
-            return (
-              <div className={className} key={index}>
-                <div className={styles.info}>
-                  <div className={styles.time}>{item.time}</div>
-                  <div className={styles.infoBox}>
-                    {user?.role == "teacher" && (
-                      <div className={styles.groups}>
-                        {item.groups?.map((group) => {
-                          return <div>{group.name}</div>;
-                        })}
-                      </div>
-                    )}
-                    <div className={styles.activity}>{item.activity}</div>
-                    <div className={styles.place}>{item.place}</div>
-                  </div>
-                  <button
-                    className={styles.deleteButton}
-                    onClick={() => dispatch(deleteSchedule(item.id))}
-                  >
-                    &times; {/* Символ крестика */}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+          day={day}
+          dayofweek={dayofweek}
+          isToday={isToday}
+          eventsForThisDay={eventsForThisDay}
+          user={user}
+        />
       );
 
-      dayofweek++;
-      if (dayofweek >= weekdays.length) {
-        dayofweek = 0;
-      }
+      dayofweek = (dayofweek + 1) % weekdays.length;
     }
 
     return calendar;
@@ -184,17 +121,20 @@ const Schedule = () => {
       <div className={`${styles.wrapperSchedule} wrapper`}>
         <ScheduleMeaning />
 
-        <div className={styles.navigation}>
-          <button className={styles.arrow} onClick={goToPrevMonth}>
-            ❮
-          </button>
-          <span>{`${months[currentMonth + 1]}, ${currentYear}`}</span>
-          <button className={styles.arrow} onClick={goToNextMonth}>
-            ❯
-          </button>
-        </div>
+        <CalendarNavigation
+          goToPrevMonth={goToPrevMonth}
+          goToNextMonth={goToNextMonth}
+          currentMonth={currentMonth}
+          currentYear={currentYear}
+          months={months}
+        />
 
-        <div className={styles.calendarGrid}>
+        <div
+          className={styles.calendarGrid}
+          style={{
+            gridTemplateRows: `30px repeat(${calendarRows}, calc(55vw / 7))`,
+          }}
+        >
           {schedule && generateCalendar()}
         </div>
       </div>
