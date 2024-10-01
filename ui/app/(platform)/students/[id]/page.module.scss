@@ -1,0 +1,45 @@
+.student {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  width: 70%;
+
+  .field {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+
+    .fieldName {
+      width: 200px;
+    }
+
+    .fieldValue {
+      height: 40px;
+      width: 300px;
+
+      div,
+      input,
+      select {
+        height: 100%;
+        width: 100%;
+        box-sizing: content-box;
+      }
+
+      select:disabled,
+      input:disabled {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        appearance: none;
+        padding: 0;
+      }
+    }
+  }
+
+  button {
+    height: 50px;
+    width: 300px;
+    margin-top: 10px;
+  }
+}

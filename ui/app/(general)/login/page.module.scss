@@ -1,0 +1,17 @@
+.wrapperLogin {
+  margin-top: 20px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    input,
+    select,
+    button {
+      box-sizing: content-box;
+      height: 40px;
+      width: 300px;
+    }
+  }
+}

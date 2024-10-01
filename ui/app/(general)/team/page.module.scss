@@ -1,0 +1,62 @@
+.wrapperTeam {
+  display: flex;
+  flex-wrap: wrap;
+  width: 820px;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+
+  @media screen and (max-width: 1050px) {
+    gap: 5px;
+  }
+
+  a {
+    &.card {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 400px;
+      height: 285px;
+      overflow: hidden;
+
+      @media screen and (max-width: 1050px) {
+        gap: 5px;
+      }
+
+      &:hover {
+        &.image {
+          img {
+            transform: scale(1.2);
+          }
+        }
+      }
+
+      .image {
+        height: 70%;
+        overflow: hidden;
+
+        img {
+          // height: 100%;
+          width: 100%;
+          transition: transform 0.7s ease-out;
+        }
+      }
+
+      .name {
+        color: black;
+        text-transform: uppercase;
+        font-weight: bold;
+      }
+
+      .desc {
+        color: black;
+        font-weight: bold;
+        font-size: 0.8em;
+
+        @media screen and (max-width: 1050px) {
+          font-size: 1em;
+        }
+      }
+    }
+  }
+}

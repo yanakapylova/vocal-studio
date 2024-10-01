@@ -1,0 +1,106 @@
+.wrapperProfile {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px !important; 
+
+  .profileImage {
+    width: 30%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    @media screen and (max-width: 730px) {
+      width: 322px;
+    }
+
+    > img {
+      width: 100%;
+    }
+
+    input {
+      width: 0px;
+      height: 0px;
+      opacity: 0;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+    }
+
+    label {
+      display: flex;
+      font-size: 0.7em;
+      justify-content: center;
+      align-items: center;
+      border: 2px dashed;
+      width: 100%;
+      padding: 0 10px;
+      height: 50px;
+
+      img {
+        width: 50px;
+      }
+    }
+
+    button {
+      width: 100%;
+      height: 50px;
+    }
+
+    .newImageSetting {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+
+      button {
+        width: 200px;
+        height: 50px;
+      }
+    }
+  }
+
+  .profileSettings {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .field {
+      display: flex;
+      gap: 10px;
+
+      @media screen and (max-width: 730px) {
+        align-items: center;
+      }
+
+      &.name {
+        align-items: end;
+        font-size: 1.5em;
+      }
+
+      .role {
+        font-size: 0.5em;
+      }
+    }
+
+    button {
+      width: 200px;
+      height: 50px;
+    }
+
+    input {
+      width: 300px;
+      height: 50px;
+    }
+
+    .newNameForm {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      @media screen and (max-width: 730px) {
+        align-items: center;
+      }
+    }
+  }
+}

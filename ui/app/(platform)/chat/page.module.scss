@@ -1,0 +1,35 @@
+.wrapperChat {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+
+  .posts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+
+    .post {
+      display: flex;
+      background-color: var(--lightColor);
+      padding: 15px;
+      border-radius: 15px;
+      gap: 10px;
+    }
+  }
+
+  form {
+
+    textarea {
+      width: calc(100% - 20px);
+      height: 50px;
+      padding: 10px !important;
+    }
+
+    button {
+      width: 120px;
+      font-size: 0.8em !important;
+      height: 40px;
+    }
+  }
+}

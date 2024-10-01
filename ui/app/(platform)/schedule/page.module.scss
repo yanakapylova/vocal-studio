@@ -1,0 +1,293 @@
+.wrapperSchedule {
+  display: flex;
+  flex-direction: column;
+  width: 90vw;
+  margin-top: 40px;
+
+  .navigation {
+    display: flex;
+    align-items: center;
+
+    .arrow {
+      background-color: transparent;
+      outline: none;
+      border: none;
+      font-size: 1em;
+      opacity: 0.5;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+  }
+
+  .meaning {
+    display: flex;
+    gap: 3vw;
+
+    @media screen and (max-width: 860px) {
+      flex-direction: column;
+    }
+
+    .permanent,
+    .additional,
+    .concert {
+      display: flex;
+      gap: 0.5vw;
+
+      @media screen and (max-width: 860px) {
+        align-items: center;
+        gap: 1vw;
+      }
+    }
+
+    .meaningColorBlocks {
+      width: 50px;
+      height: 30px;
+      border-radius: 10px;
+    }
+    .permanent > .meaningColorBlocks {
+      background-color: rgba(161, 243, 37, 0.7);
+    }
+
+    .additional > .meaningColorBlocks {
+      background-color: rgba(255, 194, 11, 0.7);
+    }
+
+    .concert > .meaningColorBlocks {
+      background-color: rgba(255, 0, 0, 0.7);
+    }
+  }
+
+  .calendarGrid {
+    display: grid;
+    grid-template-columns: repeat(7, calc((100% - 5px * 6) / 7));
+    grid-template-rows: 30px repeat(6, calc(55vw / 7));
+    margin-top: 20px;
+    gap: 5px;
+    padding: 5px;
+
+    @media screen and (max-width: 860px) {
+      align-items: center;
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+
+      margin-top: 0px;
+    }
+
+    // все квадратики
+    > div {
+      border-radius: 5px;
+      overflow: auto;
+      background-color: rgb(229, 229, 229);
+      padding: 5px;
+
+      &.weekDays {
+        text-align: center;
+      }
+
+      &.empty {
+        background-color: rgb(237, 237, 237);
+
+        @media screen and (max-width: 860px) {
+          display: none;
+        }
+      }
+
+      &.day {
+        background-color: white;
+        border: 1px solid black;
+
+        .date {
+          padding: 4px;
+          padding-left: 6px;
+          margin-bottom: 3px;
+
+          &.today {
+            background-color: rgb(173, 172, 172);
+            color: white;
+            border-radius: 5px;
+          }
+        }
+
+        .info {
+          position: relative;
+          color: black;
+          padding: 10px;
+          border-radius: 10px;
+          width: calc(100% - 20px);
+          margin: 0 auto;
+          margin-bottom: 3px;
+          display: flex;
+          gap: 5px;
+          align-items: center;
+          flex-wrap: wrap;
+          position: relative;
+
+          .deleteButton {
+            background: transparent; /* Прозрачный фон */
+            border: none; /* Без границы */
+            color: red; /* Красный цвет текста */
+            font-size: 1.2em; /* Размер шрифта */
+            cursor: pointer; /* Курсор указателя */
+            position: absolute; /* Позиционирование */
+            top: -3px; /* Отступ сверху */
+            right: 5px; /* Отступ справа */
+            padding: 0; /* Убираем отступы */
+          }
+        }
+
+        .permanent .info {
+          background-color: rgba(161, 243, 37, 0.7);
+        }
+        .additional .info {
+          background-color: rgba(255, 194, 11, 0.7);
+        }
+        .concert .info {
+          background-color: rgba(255, 0, 0, 0.7);
+        }
+
+        @media screen and (max-width: 1230px) {
+          flex-direction: column;
+          text-align: center;
+          gap: 0;
+          padding: 4px;
+          width: calc(100% - 18px);
+        }
+
+        .group {
+          font-size: 0.8em;
+        }
+
+        .place,
+        .activity {
+          font-size: 0.6em;
+        }
+
+        .groups {
+          font-size: 0.6em;
+          border: dashed black 1px;
+          padding: 3px;
+          margin-bottom: 2px;
+        }
+
+        input:not([type="checkbox"]) {
+          width: 20px;
+          height: 30px;
+          padding: 0;
+          outline: none;
+          border: none;
+          background-color: transparent;
+          font-size: 0.3em;
+          position: absolute;
+          top: -3px;
+          right: 2px;
+        }
+      }
+    }
+  }
+}
+
+.addSchedule {
+  // display: flex;
+  width: 70vw;
+  justify-content: space-around;
+  gap: 20px;
+
+  @media screen and (max-width: 860px) {
+    flex-direction: column;
+  }
+
+  form {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 20px;
+
+    .time,
+    .details,
+    .event {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+
+      div {
+        > div {
+          margin-bottom: 5px;
+        }
+      }
+    }
+
+    select {
+      height: 50px;
+      width: 222px;
+    }
+
+    input:not([type="checkbox"]) {
+      height: 50px;
+      width: 200px;
+    }
+
+    button {
+      width: 222px;
+      height: 50px;
+    }
+  }
+}
+
+.check-window {
+  width: 40%;
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 3px black solid;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 20px;
+
+  .no {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+  }
+
+  .yes {
+    text-align: center;
+    border: 2px red solid;
+    color: red;
+    width: 100px;
+    margin: 0 auto;
+    border-radius: 5px;
+    padding: 5px;
+  }
+}
+
+// tabs
+.tabs {
+  // display: flex;
+  // justify-content: space-around;
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  font-size: 1em;
+}
+
+.tabs button.active {
+  background-color: black;
+  color: white;
+}
+
+.tab_content {
+  padding: 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 5px;
+}

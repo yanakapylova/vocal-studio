@@ -1,0 +1,29 @@
+.wrapperStudents {
+  display: flex;
+
+  .students {
+    margin-top: 50px;
+    display: flex;
+    gap: 100px;
+
+    @media screen and (max-width: 700px) {
+      flex-direction: column;
+    }
+
+    > div {
+      flex-basis: fit-content;
+    }
+
+    .group {
+      button {
+        margin-left: 8px;
+        background: transparent;
+        color: red;
+        border: none;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+main {
+  
+  .wrapperContacts {
+    display: flex;
+    align-items: center;
+    height: 50vh;
+    gap: 50px;
+    margin-top: 20px;
+
+    @media screen and (max-width: 1050px) {
+      flex-direction: column;
+      height: auto;
+    }
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      @media screen and (max-width: 1050px) {
+        height: auto;
+        display: grid;
+        grid-template-columns: 40% 60%;
+        gap: 20px;
+        align-items: baseline;
+      }
+
+      p {
+        font-family: GilroyBold;
+      }
+    }
+
+    a {
+      color: black;
+    }
+
+    .map {
+      width: 100%;
+      height: 100% !important;
+    }
+  }
+}
