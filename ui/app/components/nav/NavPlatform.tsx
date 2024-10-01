@@ -22,9 +22,9 @@ export const NavPlatform = () => {
           <div className={`${styles.admin} menuItem`}>Добавить учеников</div>
         </Link>
       )}
-      <Link href={"/chat"}>
+      {/* <Link href={"/chat"}>
         <div className="menuItem">Чат</div>
-      </Link>
+      </Link> */}
       <Link href={"/schedule"}>
         <div className="menuItem">Расписание</div>
       </Link>
