@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Group" ALTER COLUMN "songs" SET DEFAULT ARRAY[]::TEXT[];

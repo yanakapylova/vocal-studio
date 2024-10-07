@@ -1,4 +1,4 @@
-export const MockSchedule = {
+{
     "type": "permanent",
     "date": "ПН",
     "time": "19:00",

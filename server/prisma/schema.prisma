@@ -27,19 +27,23 @@ model Schedule {
 model Group {
   id        Int        @id @default(autoincrement())
   name      String     @unique
+  songs     String[]   @default([])
   users     User[]     @relation("UserGroups")
   schedules Schedule[] @relation("GroupSchedules")
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String
-  surname   String
-  birthdate String
-  role      String
-  photoURL  String?
-  isActive  Boolean  @default(true)
-  groups    Group[]  @relation("UserGroups")
+  id         Int      @id @default(autoincrement())
+  phone      String   @unique
+  password   String
+  name       String
+  surname    String
+  fathername String
+  birthdate  DateTime
+  school     String
+  address    String
+  role       String
+  photoURL   String   @default("")
+  isActive   Boolean  @default(false)
+  groups     Group[]  @relation("UserGroups")
 }

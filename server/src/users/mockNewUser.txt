@@ -1,4 +1,4 @@
-export const MockUser = {
+{
     "name": "Yana",
     "surname": "K",
     "birthdate": "26.10.1999",

@@ -1,10 +1,13 @@
 export class UpdateUserDto {
+  phone?: string;
+  password?: string;
   name?: string;
   surname?: string;
-  email?: string;
-  password?: string;
-  role?: string;
+  fathername?: string;
   birthdate?: string;
+  school?: string;
+  address?: string;
+  role?: string;
   photoURL?: string;
   isActive?: boolean;
   groups?: number[];

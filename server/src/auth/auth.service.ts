@@ -10,12 +10,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(email: string, password: string): Promise<any> {
-    console.log(email);
+  async signIn(phone: string, password: string): Promise<any> {
+    console.log(phone);
 
-    const user = await this.usersService.findUserByEmail(email);
+    const user = await this.usersService.findUserByPhone(phone);
     if (!user) {
-      console.log('Неверный email ');
+      console.log('Неверный phone ');
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -24,16 +24,17 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { sub: user.id, email: user.email };
+    const payload = { sub: user.id, email: user.phone };
     return {
       access_token: await this.jwtService.signAsync(payload),
       userInfo: {
-        id: user.id,
-        password: user.password,
-        email: user.email,
+        phone: user.phone,
         name: user.name,
         surname: user.surname,
+        fathername: user.fathername,
         birthdate: user.birthdate,
+        school: user.school,
+        address: user.address,
         role: user.role,
         photoURL: user.photoURL,
         isActive: user.isActive,

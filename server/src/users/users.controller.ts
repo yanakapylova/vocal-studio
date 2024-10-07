@@ -32,7 +32,7 @@ export class UsersController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    console.log(id);
+    console.log('id controller: ' + id);
     return this.usersService.update(+id, updateUserDto);
   }
 

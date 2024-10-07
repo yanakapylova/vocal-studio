@@ -51,10 +51,10 @@ export class UsersService {
     return result;
   }
 
-  async findUserByEmail(email: string) {
+  async findUserByPhone(phone: string) {
     try {
       const user = await this.prisma.user.findUnique({
-        where: { email },
+        where: { phone },
         include: { groups: true },
       });
 
@@ -62,7 +62,7 @@ export class UsersService {
         return user;
       } else {
         throw new HttpException(
-          `Пользователь с e-mail ${email} не найден`,
+          `Пользователь с e-mail ${phone} не найден`,
           400,
         );
       }
@@ -72,6 +72,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    console.log('id service: ' + id);
     const user = await this.prisma.user.findUnique({
       where: { id },
       include: { groups: true },
