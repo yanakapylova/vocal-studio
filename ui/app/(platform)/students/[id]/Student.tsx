@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { StudentEdit } from "./StudentEdit";
 import { StudentInfo } from "./StudentInfo";
 

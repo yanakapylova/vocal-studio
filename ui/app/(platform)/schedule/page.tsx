@@ -119,8 +119,6 @@ const Schedule = () => {
   return (
     <main>
       <div className={`${styles.wrapperSchedule} wrapper`}>
-        <ScheduleMeaning />
-
         <CalendarNavigation
           goToPrevMonth={goToPrevMonth}
           goToNextMonth={goToNextMonth}
@@ -137,7 +135,9 @@ const Schedule = () => {
         >
           {schedule && generateCalendar()}
         </div>
+        <ScheduleMeaning />
       </div>
+
       {user?.role === "teacher" && <AddScheduleTabs />}
     </main>
   );

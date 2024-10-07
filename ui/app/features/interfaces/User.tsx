@@ -2,12 +2,14 @@ import { Group } from "./Group";
 
 export interface User {
   id: number;
+  role: string;
   name: string;
   surname: string;
+  fathername: string;
   birthdate: string;
-  email: string;
-  password: string;
-  role: string;
+  school: string;
+  address: string;
+  phone: string;
   photoURL: string;
   groups: Group[];
 }

@@ -5,6 +5,7 @@ import styles from "./page.module.scss";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export const NavPlatform = () => {
   const user = useSelector((state: RootState) => state.users.activeUser);
@@ -31,7 +32,15 @@ export const NavPlatform = () => {
 
       <div className={`${styles.user} menuItem`}>
         <Link href={"/profile"}>
-          <div className={styles.greeting}>Привет, {user?.name}!▼</div>
+          <div className={styles.greeting}>
+            Привет, {user?.name}!{" "}
+            {user?.photoURL && (
+              <img
+                src={`https://firebasestorage.googleapis.com/v0/b/vocal-studio-8e5a9.appspot.com/o/${user?.photoURL}?alt=media&token=02a3aaf8-064c-41a6-8226-9bea6244370b`}
+                alt="Profile"
+              />
+            )}
+          </div>
         </Link>
         <div className={styles.userMenu}>
           <button className="button" onClick={handleSignOut}>

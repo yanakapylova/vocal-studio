@@ -13,15 +13,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter();
-  if (!sessionStorage.getItem("user")) {
-    router.push("/login");
-  }
-
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
+    if (!sessionStorage.getItem("user")) {
+      router.push("/login");
+    }
+  }, [router]);
+
+  useEffect(() => {
     dispatch(setActiveUser());
-  }, []);
+  }, [dispatch]);
 
   return (
     <>

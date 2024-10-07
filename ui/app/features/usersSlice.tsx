@@ -39,14 +39,27 @@ export const fetchUserbyId = createAsyncThunk(
 export const createUser = createAsyncThunk(
   "user/createUser",
   async (user: {
+    role: string;
     name: string;
     surname: string;
+    fathername: string;
     birthdate: string;
-    email: string;
-    role: string;
+    school: string;
+    address: string;
+    phone: string;
     groups: number[];
   }) => {
-    const { name, surname, birthdate, email, role, groups } = user;
+    const {
+      name,
+      surname,
+      fathername,
+      birthdate,
+      phone,
+      school,
+      address,
+      role,
+      groups,
+    } = user;
     const response = await fetch(`http://127.0.0.1:3008/users`, {
       method: "POST",
       headers: {
@@ -55,8 +68,11 @@ export const createUser = createAsyncThunk(
       body: JSON.stringify({
         name: name,
         surname: surname,
+        fathername: fathername,
         birthdate: birthdate,
-        email: email,
+        phone: phone,
+        school: school,
+        address: address,
         password: birthdate.toString(),
         role: role,
         groups: groups,
@@ -130,8 +146,6 @@ export const updateUser = createAsyncThunk(
     };
   }) => {
     const { id, newData } = data;
-
-    console.log(JSON.stringify(newData));
     const response = await fetch(`http://127.0.0.1:3008/users/${id}`, {
       method: "PATCH",
       headers: {
@@ -147,6 +161,35 @@ export const updateUser = createAsyncThunk(
     } else {
       console.log(`Инофрмация о пользователе успешно обновлена`);
       return { data: data, statusCode: response.status };
+    }
+  }
+);
+
+export const updateUserPhoto = createAsyncThunk(
+  "user/updateUserPhoto",
+  async (data: {
+    id: number | undefined | null;
+    newData: {
+      photoURL: string | undefined | null;
+    };
+  }) => {
+    const { id, newData } = data;
+
+    const response = await fetch(`http://127.0.0.1:3008/users/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify(newData),
+    });
+
+    if (!response.ok) {
+      console.log(`Не удалось обновить информация о пользователе`);
+      return { data: null, statusCode: response.status };
+    } else {
+      console.log(`Инофрмация о пользователе успешно обновлена`);
+      return { data: newData.photoURL, statusCode: response.status };
     }
   }
 );
@@ -194,11 +237,14 @@ export interface ActiveUser {
   id: number;
   name: string;
   surname: string;
+  fathername: string;
   birthdate: string;
-  email: string;
+  phone: string;
+  school: string;
+  address: string;
   role: string;
   groups: Group[];
-  photoURL: string;
+  photoURL: string | null | undefined;
 }
 
 export interface UsersState {
@@ -237,8 +283,11 @@ export const usersSlice = createSlice({
           id: data.id,
           name: data.name,
           surname: data.surname,
+          fathername: data.fathername,
           birthdate: data.birthdate,
-          email: data.email,
+          phone: data.phone,
+          school: data.school,
+          address: data.address,
           role: data.role,
           groups: data.groups,
           photoURL: data.photoURL,
@@ -253,6 +302,8 @@ export const usersSlice = createSlice({
       if (data) {
         state.entities.push(data);
       }
+
+      console.log(statusCode);
     });
 
     // удалить пользователя
@@ -262,6 +313,7 @@ export const usersSlice = createSlice({
       if (id) {
         state.entities = state.entities.filter((entity) => entity.id !== id);
       }
+      console.log(statusCode);
     });
 
     // вход в аккаунт
@@ -273,15 +325,19 @@ export const usersSlice = createSlice({
           id: data.id,
           name: data.name,
           surname: data.surname,
+          fathername: data.fathername,
           birthdate: data.birthdate,
-          email: data.email,
+          phone: data.phone,
+          school: data.school,
+          address: data.address,
           role: data.role,
-          photoURL: data.photoURL,
           groups: data.groups,
+          photoURL: data.photoURL,
         };
       }
 
       sessionStorage.setItem("user", JSON.stringify(data));
+      console.log(statusCode);
     });
 
     // инф-ия об активном пользователе
@@ -293,12 +349,23 @@ export const usersSlice = createSlice({
           id: data.id,
           name: data.name,
           surname: data.surname,
+          fathername: data.fathername,
           birthdate: data.birthdate,
-          email: data.email,
+          phone: data.phone,
+          school: data.school,
+          address: data.address,
           role: data.role,
-          photoURL: data.photoURL,
           groups: data.groups,
+          photoURL: data.photoURL,
         };
+      }
+    });
+
+    builder.addCase(updateUserPhoto.fulfilled, (state, action) => {
+      const { data, statusCode } = action.payload;
+
+      if (statusCode == 200 && state.activeUser) {
+        state.activeUser.photoURL = data;
       }
     });
   },

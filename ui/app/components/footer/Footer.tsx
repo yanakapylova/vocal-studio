@@ -1,14 +1,13 @@
 import { NavGeneral } from "../nav/NavGeneral";
 
-
 export const Footer = () => {
   return (
     <footer>
       <div className="container">
         <div className="contacts">
           <div className="name">
-            Образцовая шоу-группа "Тип-топ" <br /> и эстрадная студия
-            вокала "Crystal"
+            Образцовая шоу-группа &quot;Тип-топ&quot; <br /> и эстрадная студия
+            вокала &quot;Crystal&quot;¸
           </div>
           <div className="address">
             Республика Беларусь, г. Могилёв, <br /> ул. Первомайская, 34

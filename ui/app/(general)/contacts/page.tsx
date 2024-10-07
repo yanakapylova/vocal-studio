@@ -1,12 +1,9 @@
-import { Banner } from "@/app/components/banner/Banner";
 import styles from "./page.module.scss";
-
-
 
 const Contacts = () => {
   return (
     <main>
-    <div className={styles.wrapperContacts}>
+      <div className={styles.wrapperContacts}>
         <div className={styles.text}>
           <p>
             <b>Как нас найти?</b>
@@ -32,11 +29,10 @@ const Contacts = () => {
           height="400"
           title="map"
         />
+      </div>
 
-    </div>
-
-    <div></div>
-  </main>
+      <div></div>
+    </main>
   );
 };
 

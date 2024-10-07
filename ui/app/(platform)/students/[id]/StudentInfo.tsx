@@ -14,13 +14,23 @@ export const StudentInfo = ({ data, toggleState }: any) => {
       </div>
 
       <div className={styles.field}>
-        <div className={styles.fieldName}>E-mail:</div>
-        <div className={styles.fieldValue}>{data.email}</div>
+        <div className={styles.fieldName}>Отчество:</div>
+        <div className={styles.fieldValue}>{data.fathername}</div>
       </div>
 
       <div className={styles.field}>
-        <div className={styles.fieldName}>Дата рождения:</div>
-        <div className={styles.fieldValue}>{data.birthdate}</div>
+        <div className={styles.fieldName}>Номер телефона</div>
+        <div className={styles.fieldValue}>{data.phone}</div>
+      </div>
+
+      <div className={styles.field}>
+        <div className={styles.fieldName}>Учреждение образования:</div>
+        <div className={styles.fieldValue}>{data.school}</div>
+      </div>
+
+      <div className={styles.field}>
+        <div className={styles.fieldName}>Адрес:</div>
+        <div className={styles.fieldValue}>{data.address}</div>
       </div>
 
       <div className={styles.field}>

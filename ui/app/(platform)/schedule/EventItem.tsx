@@ -15,7 +15,7 @@ export const EventItem = ({ className, index, user, item }: any) => {
           {user?.role == "teacher" && (
             <div className={styles.groups}>
               {item.groups?.map((group: Group) => {
-                return <div>{group.name}</div>;
+                return <div key={group.name}>{group.name}</div>;
               })}
             </div>
           )}

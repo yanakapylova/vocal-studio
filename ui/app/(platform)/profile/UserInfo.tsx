@@ -1,14 +1,22 @@
+import { useSelector } from "react-redux";
 import styles from "./page.module.scss";
+import { RootState } from "@/app/store";
 
-const UserInfo = ({ user }: any) => {
+const UserInfo = () => {
+  const user = useSelector((state: RootState) => state.users.activeUser);
+
   return (
     <div className={styles.profileSettings}>
       <div className={`${styles.field} ${styles.name}`}>
         <div>
-          {user?.name} {user?.surname}
+          {user?.name} {user?.surname} {user?.fathername}
         </div>
         <div className={styles.role}>
-          {user?.role == "student" ? "Ученик" : "Учитель"}
+          {user?.role == "student"
+            ? "Ученик"
+            : user?.role == "teacher"
+            ? "Учитель"
+            : ""}
         </div>
       </div>
 
@@ -17,7 +25,15 @@ const UserInfo = ({ user }: any) => {
       </div>
 
       <div className={styles.field}>
-        <b>E-mail:</b> {user?.email}
+        <b>Номер телефона:</b> {user?.phone}
+      </div>
+
+      <div className={styles.field}>
+        <b>Учреждение образования:</b> {user?.school}
+      </div>
+
+      <div className={styles.field}>
+        <b>Адрес:</b> {user?.address}
       </div>
 
       <div className={styles.field}>

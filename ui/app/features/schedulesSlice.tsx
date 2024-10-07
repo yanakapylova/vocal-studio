@@ -2,15 +2,6 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Schedule } from "./interfaces/Schedule";
 import { Group } from "./interfaces/Group";
 
-// получение id сессии (задается после login)
-function getSessionID() {
-  const cookieArray = document.cookie.split(";");
-  const sessionIDItem = cookieArray.find(
-    (cookieItem) => cookieItem.split("=")[0] === "session_id"
-  );
-  return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
-}
-
 // получить всех пользователей (только для админа)
 
 export const fetchSchedules = createAsyncThunk(
@@ -48,7 +39,7 @@ export const createSchedule = createAsyncThunk(
     groups: number[];
   }) => {
     const { type, date, time, place, durationMin, activity, groups } = info;
-    console.log(groups)
+    console.log(groups);
     const response = await fetch(`http://localhost:3008/schedule`, {
       method: "POST",
       headers: {
@@ -65,7 +56,7 @@ export const createSchedule = createAsyncThunk(
       }),
     });
     const data = await response.json();
-    console.log(data)
+    console.log(data);
     return [data, response.status];
   }
 );
@@ -112,6 +103,7 @@ export const schedulesSlice = createSlice({
       if (data) {
         state.entities = data;
       }
+      console.log(responseStatus);
     });
 
     builder.addCase(getSchedule.fulfilled, (state, action) => {
@@ -119,14 +111,16 @@ export const schedulesSlice = createSlice({
       if (data) {
         state.current = data;
       }
+      console.log(responseStatus);
     });
 
     builder.addCase(createSchedule.fulfilled, (state, action) => {
       const [data, responseStatus] = action.payload;
       if (data) {
-        console.log(data)
+        console.log(data);
         state.current.push(data);
       }
+      console.log(responseStatus);
     });
 
     builder.addCase(deleteSchedule.fulfilled, (state, action) => {

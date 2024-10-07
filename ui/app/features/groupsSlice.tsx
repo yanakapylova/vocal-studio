@@ -2,13 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Group } from "./interfaces/Group";
 
 // получение id сессии (задается после login)
-function getSessionID() {
-  const cookieArray = document.cookie.split(";");
-  const sessionIDItem = cookieArray.find(
-    (cookieItem) => cookieItem.split("=")[0] === "session_id"
-  );
-  return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
-}
+// function getSessionID() {
+//   const cookieArray = document.cookie.split(";");
+//   const sessionIDItem = cookieArray.find(
+//     (cookieItem) => cookieItem.split("=")[0] === "session_id"
+//   );
+//   return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
+// }
 
 // получить всех пользователей (только для админа)
 
@@ -67,6 +67,7 @@ export const groupsSlice = createSlice({
       if (data) {
         state.entities = data;
       }
+      console.log(responseStatus);
     });
 
     builder.addCase(createGroup.fulfilled, (state, action) => {
@@ -74,6 +75,7 @@ export const groupsSlice = createSlice({
       if (data) {
         state.entities.push(data);
       }
+      console.log(responseStatus);
     });
   },
 });

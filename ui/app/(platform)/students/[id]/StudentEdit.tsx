@@ -22,7 +22,7 @@ export const StudentEdit = ({ data, toggleState }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(fetchGroups());
-  }, []);
+  }, [dispatch]);
 
   const [toBeChanged, setToBeChanged] = useState({});
 

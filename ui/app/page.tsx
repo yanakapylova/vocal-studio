@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { HeaderGeneral } from "./components/header/HeaderGeneral";
 import styles from "./page.module.scss";
 import { Footer } from "@/app/components/footer/Footer";
@@ -39,13 +40,15 @@ const About = () => {
         </div>
 
         <div className={`${styles.wrapperAbout} wrapper`}>
-          {list.map((item, key) => {
+          {list.map((item) => {
             return (
-              <div className={styles.aboutItem}>
+              <div key={item.text} className={styles.aboutItem}>
                 <div className={styles.text}>{item.text}</div>
                 <div className={styles.imgContainer}>
-                  {item.images.map((image: string, key: any) => {
-                    return <img src={"img/about/" + image} alt="" />;
+                  {item.images.map((image: string) => {
+                    return (
+                      <img src={"img/about/" + image} alt="" key={image} />
+                    );
                   })}
                 </div>
               </div>

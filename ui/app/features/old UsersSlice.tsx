@@ -1,275 +1,190 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Group } from "./interfaces/Group";
-import { User } from "./interfaces/User";
-import { mockUser } from "./mocks/User";
-import { mockSchedule, mockSchedule2, mockSchedule3 } from "./mocks/Schedule";
-import { Schedule } from "./interfaces/Schedule";
+// import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+// import { Group } from "./interfaces/Group";
+// import { User } from "./interfaces/User";
+// import { mockUser } from "./mocks/User";
+// import { mockSchedule, mockSchedule2, mockSchedule3 } from "./mocks/Schedule";
+// import { Schedule } from "./interfaces/Schedule";
 
-// получение id сессии (задается после login)
-function getSessionID() {
-  const cookieArray = document.cookie.split(";");
-  const sessionIDItem = cookieArray.find(
-    (cookieItem) => cookieItem.split("=")[0] === "session_id"
-  );
-  return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
-}
+// // получение id сессии (задается после login)
+// function getSessionID() {
+//   const cookieArray = document.cookie.split(";");
+//   const sessionIDItem = cookieArray.find(
+//     (cookieItem) => cookieItem.split("=")[0] === "session_id"
+//   );
+//   return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
+// }
 
-// получить всех пользователей (только для админа)
+// // получить всех пользователей (только для админа)
+// // export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
+// //   const jwt = localStorage.getItem("jwt_token")?.toString();
+// //   if (jwt) {
+// //     const response = await fetch("http://127.0.0.1:3008/users", {
+// //       method: "GET",
+// //       headers: {
+// //         Authorization: jwt,
+// //       },
+// //     });
+// //     const data = await response.json();
+// //     if (!response.ok) {
+// //       console.log("Не удалось получить пользователей");
+// //       return [null, 500];
+// //     }
+
+// //     return [data, response.status];
+// //   } else {
+// //     return [null, 500];
+// //   }
+// // });
+
+// // получить пользователя по id
+
 // export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-//   const jwt = localStorage.getItem("jwt_token")?.toString();
-//   if (jwt) {
-//     const response = await fetch("http://127.0.0.1:3008/users", {
-//       method: "GET",
-//       headers: {
-//         Authorization: jwt,
-//       },
-//     });
-//     const data = await response.json();
-//     if (!response.ok) {
-//       console.log("Не удалось получить пользователей");
-//       return [null, 500];
-//     }
-
-//     return [data, response.status];
-//   } else {
+//   const response = await fetch("http://127.0.0.1:3008/users", {
+//     method: "GET",
+//   });
+//   const data = await response.json();
+//   if (!response.ok) {
+//     console.log("Не удалось получить пользователей");
 //     return [null, 500];
 //   }
+
+//   return [data, response.status];
 // });
 
-// получить пользователя по id
-
-export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {
-  const response = await fetch("http://127.0.0.1:3008/users", {
-    method: "GET",
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    console.log("Не удалось получить пользователей");
-    return [null, 500];
-  }
-
-  return [data, response.status];
-});
-
-export const fetchUserbyId = createAsyncThunk(
-  "user/fetchUserbyId",
-  async (id: number) => {
-    const response = await fetch(`http://localhost:3008/users/${id}`, {
-      method: "GET",
-    });
-    const data = await response.json();
-    return [data, response.status];
-  }
-);
-
-// export const getSchedule = createAsyncThunk(
-//   "user/getSchedule",
+// export const fetchUserbyId = createAsyncThunk(
+//   "user/fetchUserbyId",
 //   async (id: number) => {
-//     const response = await fetch(`http://localhost:3008/schedule/user/${id}`, {
+//     const response = await fetch(`http://localhost:3008/users/${id}`, {
 //       method: "GET",
 //     });
 //     const data = await response.json();
-//     console.log(data);
 //     return [data, response.status];
 //   }
 // );
 
-// sign in
-// export const signInWithCredits = createAsyncThunk(
-//   "user/signInWithCredits",
-//   async (credits: string[]) => {
-//     const [email, password] = credits;
-//     const response = await fetch(`http://127.0.0.1:3000/auth/login`, {
+// // export const getSchedule = createAsyncThunk(
+// //   "user/getSchedule",
+// //   async (id: number) => {
+// //     const response = await fetch(`http://localhost:3008/schedule/user/${id}`, {
+// //       method: "GET",
+// //     });
+// //     const data = await response.json();
+// //     console.log(data);
+// //     return [data, response.status];
+// //   }
+// // );
+
+// // sign in
+// // export const signInWithCredits = createAsyncThunk(
+// //   "user/signInWithCredits",
+// //   async (credits: string[]) => {
+// //     const [email, password] = credits;
+// //     const response = await fetch(`http://127.0.0.1:3000/auth/login`, {
+// //       method: "POST",
+// //       headers: {
+// //         "Content-Type": "application/json",
+// //       },
+// //       body: JSON.stringify({
+// //         email: email,
+// //         password: password,
+// //       }),
+// //     });
+
+// //     if (!response.ok) {
+// //       console.log("Пользователя с такими данными не существует ");
+// //       return [null, response.status];
+// //     } else {
+// //       const data = await response.json();
+// //       console.log(data["access_token"]);
+// //       localStorage.removeItem("jwt_token");
+// //       localStorage.setItem("jwt_token", "Bearer " + data["access_token"]);
+// //       return [data["userInfo"], response.status];
+// //     }
+// //   }
+// // );
+
+// // создать нового пользователя
+// export const createUser = createAsyncThunk(
+//   "user/createUser",
+//   async (data: {
+//     name: string;
+//     surname: string;
+//     birthdate: string;
+//     email: string;
+//     role: string;
+//     groups: number[];
+//   }) => {
+//     const { name, surname, birthdate, email, role, groups } = data;
+//     const response = await fetch(`http://127.0.0.1:3008/users`, {
 //       method: "POST",
 //       headers: {
 //         "Content-Type": "application/json",
 //       },
 //       body: JSON.stringify({
+//         name: name,
+//         surname: surname,
+//         birthdate: birthdate,
 //         email: email,
-//         password: password,
+//         password: birthdate.toString(),
+//         role: role,
+//         groups: groups,
 //       }),
 //     });
 
 //     if (!response.ok) {
-//       console.log("Пользователя с такими данными не существует ");
+//       console.log("Не удалось создать пользователя");
 //       return [null, response.status];
 //     } else {
 //       const data = await response.json();
-//       console.log(data["access_token"]);
-//       localStorage.removeItem("jwt_token");
-//       localStorage.setItem("jwt_token", "Bearer " + data["access_token"]);
-//       return [data["userInfo"], response.status];
-//     }
-//   }
-// );
-
-// создать нового пользователя
-export const createUser = createAsyncThunk(
-  "user/createUser",
-  async (data: {
-    name: string;
-    surname: string;
-    birthdate: string;
-    email: string;
-    role: string;
-    groups: number[];
-  }) => {
-    const { name, surname, birthdate, email, role, groups } = data;
-    const response = await fetch(`http://127.0.0.1:3008/users`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name,
-        surname: surname,
-        birthdate: birthdate,
-        email: email,
-        password: birthdate.toString(),
-        role: role,
-        groups: groups,
-      }),
-    });
-
-    if (!response.ok) {
-      console.log("Не удалось создать пользователя");
-      return [null, response.status];
-    } else {
-      const data = await response.json();
-      console.log({
-        email: data.email,
-        password: data.password,
-        login: data.login,
-        id: data._id,
-      });
-      return [
-        {
-          email: data.email,
-          password: data.password,
-          login: data.login,
-          id: data._id,
-        },
-        response.status,
-      ];
-    }
-  }
-);
-
-// удалить пользователя
-export const removeUserbyId = createAsyncThunk(
-  "user/removeUserbyId",
-  async (id: number) => {
-    const response = await fetch(`http://127.0.0.1:3008/users/${id}`, {
-      method: "DELETE",
-    });
-    if (!response.ok) {
-      console.log("Пользователя с таким id не существует");
-      return [null, +response.status];
-    }
-    return [id, +response.status];
-  }
-);
-
-// обновление e-mail
-export const updateEmailById = createAsyncThunk(
-  "user/updateEmailById",
-  async (data: any[]) => {
-    const [id, newEmail] = data;
-
-    const response = await fetch(`http://127.0.0.1:3000/users/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: newEmail,
-      }),
-    });
-
-    if (!response.ok) {
-      return [null, response.status];
-    } else {
-      return [data, response.status];
-    }
-  }
-);
-
-// запрос кода для восстановления пароля
-// export const codeRequest = createAsyncThunk(
-//   "user/codeRequest",
-//   async (email: string) => {
-//     const response = await fetch(`http://127.0.0.1:3000/reset/generate_code`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         email: email,
-//         sessionId: getSessionID(),
-//       }),
-//     });
-
-//     const data = await response.json();
-//     console.log(data["code"]);
-
-//     if (!response.ok) {
-//       return [null, response.status];
-//     } else {
-//       return [data, response.status];
-//     }
-//   }
-// );
-
-// проверка кода для восстановления пароля
-// export const checkCode = createAsyncThunk(
-//   "user/checkCode",
-//   async (info: string[]) => {
-//     const [email, code] = info;
-//     const response = await fetch(
-//       `http://127.0.0.1:3000/reset/check_reset_code`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
+//       console.log({
+//         email: data.email,
+//         password: data.password,
+//         login: data.login,
+//         id: data._id,
+//       });
+//       return [
+//         {
+//           email: data.email,
+//           password: data.password,
+//           login: data.login,
+//           id: data._id,
 //         },
-//         body: JSON.stringify({
-//           email: email,
-//           sessionId: getSessionID(),
-//           code: code,
-//         }),
-//       }
-//     );
-
-//     const data = await response.json();
-
-//     if (!response.ok) {
-//       return [null, response.status];
-//     } else {
-//       return [data, response.status];
+//         response.status,
+//       ];
 //     }
 //   }
 // );
 
-// сброс пароля
-// export const resetPassword = createAsyncThunk(
-//   "user/resetPassword",
-//   async (info: string[]) => {
-//     const [email, code, newPassword] = info;
-//     console.log(email, code, newPassword);
-//     const response = await fetch(`http://127.0.0.1:3000/reset/reset_password`, {
-//       method: "PATCH",
+// // удалить пользователя
+// export const removeUserbyId = createAsyncThunk(
+//   "user/removeUserbyId",
+//   async (id: number) => {
+//     const response = await fetch(`http://127.0.0.1:3008/users/${id}`, {
+//       method: "DELETE",
+//     });
+//     if (!response.ok) {
+//       console.log("Пользователя с таким id не существует");
+//       return [null, +response.status];
+//     }
+//     return [id, +response.status];
+//   }
+// );
+
+// // обновление e-mail
+// export const updateEmailById = createAsyncThunk(
+//   "user/updateEmailById",
+//   async (data: any[]) => {
+//     const [id, newEmail] = data;
+
+//     const response = await fetch(`http://127.0.0.1:3000/users/${id}`, {
+//       method: "PUT",
 //       headers: {
 //         "Content-Type": "application/json",
 //       },
 //       body: JSON.stringify({
-//         email: email,
-//         code: code,
-//         password: newPassword,
-//         sessionID: getSessionID(),
+//         email: newEmail,
 //       }),
 //     });
-
-//     const data = await response.json();
 
 //     if (!response.ok) {
 //       return [null, response.status];
@@ -279,153 +194,238 @@ export const updateEmailById = createAsyncThunk(
 //   }
 // );
 
-export interface ActiveUser {
-  id: number;
-  name: string;
-  surname: string;
-  birthdate: string;
-  email: string;
-  role: string;
-  groups: Group[];
-  photoURL: string;
-}
+// // запрос кода для восстановления пароля
+// // export const codeRequest = createAsyncThunk(
+// //   "user/codeRequest",
+// //   async (email: string) => {
+// //     const response = await fetch(`http://127.0.0.1:3000/reset/generate_code`, {
+// //       method: "POST",
+// //       headers: {
+// //         "Content-Type": "application/json",
+// //       },
+// //       body: JSON.stringify({
+// //         email: email,
+// //         sessionId: getSessionID(),
+// //       }),
+// //     });
 
-export interface UsersState {
-  entities: User[];
-  activeUser: ActiveUser | null;
-  actionStatus: any;
-  activeSchedule: Schedule[];
-  groups: Group[];
-}
+// //     const data = await response.json();
+// //     console.log(data["code"]);
 
-const initialState: UsersState = {
-  entities: [],
-  activeUser: null,
-  actionStatus: 0,
-  activeSchedule: [],
-  groups: [],
-};
+// //     if (!response.ok) {
+// //       return [null, response.status];
+// //     } else {
+// //       return [data, response.status];
+// //     }
+// //   }
+// // );
 
-export const usersSlice = createSlice({
-  name: "users",
-  initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    // получить всех пользователей (только для админа)
-    builder.addCase(fetchUsers.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
-      if (data) {
-        state.entities = data;
-      }
-    });
+// // проверка кода для восстановления пароля
+// // export const checkCode = createAsyncThunk(
+// //   "user/checkCode",
+// //   async (info: string[]) => {
+// //     const [email, code] = info;
+// //     const response = await fetch(
+// //       `http://127.0.0.1:3000/reset/check_reset_code`,
+// //       {
+// //         method: "POST",
+// //         headers: {
+// //           "Content-Type": "application/json",
+// //         },
+// //         body: JSON.stringify({
+// //           email: email,
+// //           sessionId: getSessionID(),
+// //           code: code,
+// //         }),
+// //       }
+// //     );
 
-    builder.addCase(fetchUserbyId.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
-      if (data) {
-        state.activeUser = {
-          id: data.id,
-          name: data.name,
-          surname: data.surname,
-          birthdate: data.birthdate,
-          email: data.email,
-          role: data.role,
-          groups: data.groups,
-          photoURL: data.photoURL,
-        };
-      }
-    });
+// //     const data = await response.json();
 
-    // builder.addCase(getSchedule.fulfilled, (state, action) => {
-    //   const [data, responseStatus] = action.payload;
-    //   if (data) {
-    //     state.activeSchedule = data;
-    //   }
-    // });
+// //     if (!response.ok) {
+// //       return [null, response.status];
+// //     } else {
+// //       return [data, response.status];
+// //     }
+// //   }
+// // );
 
-    // создать нового пользователя
-    builder.addCase(createUser.fulfilled, (state, action) => {
-      const data: any = action.payload[0];
-      const responseStatus: any = action.payload[1];
+// // сброс пароля
+// // export const resetPassword = createAsyncThunk(
+// //   "user/resetPassword",
+// //   async (info: string[]) => {
+// //     const [email, code, newPassword] = info;
+// //     console.log(email, code, newPassword);
+// //     const response = await fetch(`http://127.0.0.1:3000/reset/reset_password`, {
+// //       method: "PATCH",
+// //       headers: {
+// //         "Content-Type": "application/json",
+// //       },
+// //       body: JSON.stringify({
+// //         email: email,
+// //         code: code,
+// //         password: newPassword,
+// //         sessionID: getSessionID(),
+// //       }),
+// //     });
 
-      if (data) {
-        state.entities.push(data);
-      }
+// //     const data = await response.json();
 
-      console.log(data, responseStatus);
-    });
+// //     if (!response.ok) {
+// //       return [null, response.status];
+// //     } else {
+// //       return [data, response.status];
+// //     }
+// //   }
+// // );
 
-    // удалить пользователя
-    builder.addCase(removeUserbyId.fulfilled, (state, action) => {
-      const [id, responseStatus] = action.payload;
-      if (id) {
-        state.entities = state.entities.filter((entity) => entity.id !== id);
-      }
+// export interface ActiveUser {
+//   id: number;
+//   name: string;
+//   surname: string;
+//   birthdate: string;
+//   email: string;
+//   role: string;
+//   groups: Group[];
+//   photoURL: string;
+// }
 
-      console.log(id, responseStatus);
-    });
+// export interface UsersState {
+//   entities: User[];
+//   activeUser: ActiveUser | null;
+//   actionStatus: any;
+//   activeSchedule: Schedule[];
+//   groups: Group[];
+// }
 
-    // sign in
-    // builder.addCase(signInWithCredits.fulfilled, (state, action) => {
-    //   const data: any = action.payload[0];
-    //   const responseStatus: any = action.payload[1];
+// const initialState: UsersState = {
+//   entities: [],
+//   activeUser: null,
+//   actionStatus: 0,
+//   activeSchedule: [],
+//   groups: [],
+// };
 
-    //   if (data) {
-    //     state.activeUser = {
-    //       id: data.id,
-    //       name: data.name,
-    //       surname: data.surname,
-    //       birthdate: data.birthdate,
-    //       email: data.email,
-    //       groups: data.groups,
-    //       photoURL: data.photoURL,
-    //     };
-    //   }
+// export const usersSlice = createSlice({
+//   name: "users",
+//   initialState,
+//   reducers: {},
+//   extraReducers: (builder) => {
+//     // получить всех пользователей (только для админа)
+//     builder.addCase(fetchUsers.fulfilled, (state, action) => {
+//       const [data, responseStatus] = action.payload;
+//       if (data) {
+//         state.entities = data;
+//       }
+//     });
 
-    //   console.log(data, responseStatus);
-    // });
+//     builder.addCase(fetchUserbyId.fulfilled, (state, action) => {
+//       const [data, responseStatus] = action.payload;
+//       if (data) {
+//         state.activeUser = {
+//           id: data.id,
+//           name: data.name,
+//           surname: data.surname,
+//           birthdate: data.birthdate,
+//           email: data.email,
+//           role: data.role,
+//           groups: data.groups,
+//           photoURL: data.photoURL,
+//         };
+//       }
+//     });
 
-    // обновление e-mail
-    builder.addCase(updateEmailById.fulfilled, (state, action) => {
-      const data: any = action.payload[0];
-      const responseStatus: any = action.payload[1];
+//     // builder.addCase(getSchedule.fulfilled, (state, action) => {
+//     //   const [data, responseStatus] = action.payload;
+//     //   if (data) {
+//     //     state.activeSchedule = data;
+//     //   }
+//     // });
 
-      if (data) {
-        const [id, newEmail] = data;
-        const item: any = state.entities.findIndex(
-          (entity) => entity.id === id
-        );
-        if (item !== -1) {
-          state.entities[item]["email"] = newEmail;
-        }
-      }
+//     // создать нового пользователя
+//     builder.addCase(createUser.fulfilled, (state, action) => {
+//       const data: any = action.payload[0];
+//       const responseStatus: any = action.payload[1];
 
-      console.log(data, responseStatus);
-    });
+//       if (data) {
+//         state.entities.push(data);
+//       }
 
-    // запрос кода для восстановления пароля
-    // builder.addCase(codeRequest.fulfilled, (state, action) => {
-    //   const data: any = action.payload[0];
-    //   const responseStatus: any = action.payload[1];
+//       console.log(data, responseStatus);
+//     });
 
-    //   console.log(data, responseStatus);
-    // });
+//     // удалить пользователя
+//     builder.addCase(removeUserbyId.fulfilled, (state, action) => {
+//       const [id, responseStatus] = action.payload;
+//       if (id) {
+//         state.entities = state.entities.filter((entity) => entity.id !== id);
+//       }
 
-    // проверка кода для восстановления пароля
-    // builder.addCase(checkCode.fulfilled, (state, action) => {
-    //   const data: any = action.payload[0];
-    //   const responseStatus: any = action.payload[1];
+//       console.log(id, responseStatus);
+//     });
 
-    //   console.log(data, responseStatus);
-    // });
+//     // sign in
+//     // builder.addCase(signInWithCredits.fulfilled, (state, action) => {
+//     //   const data: any = action.payload[0];
+//     //   const responseStatus: any = action.payload[1];
 
-    // сброс пароля
-    // builder.addCase(resetPassword.fulfilled, (state, action) => {
-    //   const data: any = action.payload[0];
-    //   const responseStatus: any = action.payload[1];
+//     //   if (data) {
+//     //     state.activeUser = {
+//     //       id: data.id,
+//     //       name: data.name,
+//     //       surname: data.surname,
+//     //       birthdate: data.birthdate,
+//     //       email: data.email,
+//     //       groups: data.groups,
+//     //       photoURL: data.photoURL,
+//     //     };
+//     //   }
 
-    //   console.log(data, responseStatus);
-    // });
-  },
-});
+//     //   console.log(data, responseStatus);
+//     // });
 
-export const usersReducer = usersSlice.reducer;
+//     // обновление e-mail
+//     builder.addCase(updateEmailById.fulfilled, (state, action) => {
+//       const data: any = action.payload[0];
+//       const responseStatus: any = action.payload[1];
+
+//       if (data) {
+//         const [id, newEmail] = data;
+//         const item: any = state.entities.findIndex(
+//           (entity) => entity.id === id
+//         );
+//         if (item !== -1) {
+//           state.entities[item]["email"] = newEmail;
+//         }
+//       }
+
+//       console.log(data, responseStatus);
+//     });
+
+//     // запрос кода для восстановления пароля
+//     // builder.addCase(codeRequest.fulfilled, (state, action) => {
+//     //   const data: any = action.payload[0];
+//     //   const responseStatus: any = action.payload[1];
+
+//     //   console.log(data, responseStatus);
+//     // });
+
+//     // проверка кода для восстановления пароля
+//     // builder.addCase(checkCode.fulfilled, (state, action) => {
+//     //   const data: any = action.payload[0];
+//     //   const responseStatus: any = action.payload[1];
+
+//     //   console.log(data, responseStatus);
+//     // });
+
+//     // сброс пароля
+//     // builder.addCase(resetPassword.fulfilled, (state, action) => {
+//     //   const data: any = action.payload[0];
+//     //   const responseStatus: any = action.payload[1];
+
+//     //   console.log(data, responseStatus);
+//     // });
+//   },
+// });
+
+// export const usersReducer = usersSlice.reducer;

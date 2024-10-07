@@ -12,28 +12,32 @@ const Admin = () => {
   const user = useSelector((state: RootState) => state.users.activeUser);
   const router = useRouter();
 
-  if (user?.role !== "teacher") {
-    router.push("/profile");
-  }
-
+  const [role, setRole] = useState("");
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  const [role, setRole] = useState("");
-  const [groups, setGroups] = useState<number[]>([]);
+  const [fathername, setFathername] = useState("");
+  const [phone, setPhone] = useState("");
   const [birthdate, setBirthdate] = useState("");
+  const [school, setSchool] = useState("");
+  const [address, setAddress] = useState("");
+  const [groups, setGroups] = useState<number[]>([]);
 
   const [newGroupName, setNewGroupName] = useState("");
 
   const groupsList = useSelector((state: RootState) => state.groups.entities);
-  const usersList = useSelector((state: RootState) => state.users.entities);
 
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
     dispatch(fetchGroups());
     dispatch(fetchUsers());
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user && user.role !== "teacher") {
+      router.push("/profile");
+    }
+  }, [user, router]);
 
   return (
     <main>
@@ -68,7 +72,17 @@ const Admin = () => {
 
             if (groups.length > 0) {
               dispatch(
-                createUser({ name, surname, email, role, groups, birthdate })
+                createUser({
+                  role,
+                  name,
+                  surname,
+                  fathername,
+                  birthdate,
+                  phone,
+                  school,
+                  address,
+                  groups,
+                })
               ).then((res) => {
                 const payload: any = res.payload;
                 if (payload[0]) {
@@ -78,18 +92,37 @@ const Admin = () => {
                   Array.from(checkboxes).map((checkbox) => {
                     checkbox.checked = false;
                   });
+                  setRole(() => "");
                   setName(() => "");
                   setSurname(() => "");
-                  setEmail(() => "");
-                  setRole(() => "");
-                  setGroups(() => []);
+                  setFathername(() => "");
+                  setPhone(() => "");
                   setBirthdate(() => "");
+                  setSchool(() => "");
+                  setAddress(() => "");
+                  setGroups(() => []);
                 }
               });
             }
           }}
           id="addStudent"
         >
+          <select
+            name="role"
+            className="formFields"
+            id="role"
+            required
+            onChange={(e) => {
+              return setRole(e.target.value);
+            }}
+            defaultValue={""}
+            style={{ opacity: role ? 1 : 0.5 }}
+          >
+            
+            <option value="student" defaultChecked>Ученик</option>
+            <option value="teacher">Учитель</option>
+          </select>
+
           <input
             type="text"
             placeholder="Имя"
@@ -107,30 +140,45 @@ const Admin = () => {
             className="formFields"
           />
           <input
-            type="email"
-            placeholder="E-mail"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            type="text"
+            placeholder="Отчество"
+            value={fathername}
+            onChange={(e) => setFathername(e.target.value)}
             required
             className="formFields"
           />
-          <select
-            name="role"
-            className="formFields"
-            id="role"
+          <input
+            type="phone"
+            placeholder="Номер телефона"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
             required
-            onChange={(e) => {
-              return setRole(e.target.value);
-            }}
-            defaultValue={""}
-            style={{ opacity: role ? 1 : 0.5 }}
-          >
-            <option value="" disabled>
-              -- Не выбрано --
-            </option>
-            <option value="student">Ученик</option>
-            <option value="teacher">Учитель</option>
-          </select>
+            className="formFields"
+          />
+
+          <input
+            type="date"
+            required
+            className="formFields"
+            onChange={(e) => setBirthdate(e.target.value)}
+            style={{ opacity: birthdate ? 1 : 0.5 }}
+          />
+          <input
+            type="text"
+            placeholder="Учебное заведение"
+            value={school}
+            onChange={(e) => setSchool(e.target.value)}
+            required
+            className="formFields"
+          />
+          <input
+            type="text"
+            placeholder="Адрес"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            required
+            className="formFields"
+          />
 
           <div id="groups">
             <span>Выберите группы:</span>
@@ -160,35 +208,8 @@ const Admin = () => {
             })}
           </div>
 
-          <input
-            type="date"
-            required
-            className="formFields"
-            onChange={(e) => setBirthdate(e.target.value)}
-            style={{ opacity: birthdate ? 1 : 0.5 }}
-          />
           <button className="button">Добавить пользователя</button>
         </form>
-
-        <div className="students">
-          {usersList.map((user) => (
-            <div key={user.id}>
-              {user.name} {user.surname}
-              <button
-                onClick={() => dispatch(deleteUser(+user.id))}
-                style={{
-                  marginLeft: "8px",
-                  background: "red",
-                  color: "white",
-                  border: "none",
-                  cursor: "pointer",
-                }}
-              >
-                X
-              </button>
-            </div>
-          ))}
-        </div>
       </div>
       <div></div>
     </main>

@@ -21,14 +21,16 @@ const Admin = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
-  if (user?.role !== "teacher") {
-    router.push("/profile");
-  }
+  useEffect(() => {
+    if (user?.role !== "teacher") {
+      router.push("/profile");
+    }
+  }, [user, router]);
 
   useEffect(() => {
     dispatch(fetchGroups());
     dispatch(fetchUsers());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (usersList.length > 0 && groupsList.length > 0) {
@@ -72,9 +74,13 @@ const Admin = () => {
               const group: any[] = groupedUsers[groupName];
 
               return group.length == 0 ? (
-                <EmptyGroup groupName={groupName} />
+                <EmptyGroup groupName={groupName} key={groupName} />
               ) : (
-                <GroupItem groupedUsers={groupedUsers} groupName={groupName} />
+                <GroupItem
+                  groupedUsers={groupedUsers}
+                  groupName={groupName}
+                  key={groupName}
+                />
               );
             })}
         </div>
@@ -109,7 +115,7 @@ const GroupList = ({ groupedUsers, groupName }: any) => {
   return (
     <ul>
       {groupedUsers[groupName].map((user: User) => (
-        <StudentItem user={user} />
+        <StudentItem user={user} key={user.phone} />
       ))}
     </ul>
   );
