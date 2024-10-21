@@ -4,7 +4,7 @@ import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { salt } from 'src/constants/constants';
+import { salt } from 'src/constants/constants'; 
 
 // TODO: add try/catch where needed
 @Injectable()
