@@ -1,0 +1,472 @@
+diff --git a/server/prisma/schema.prisma b/server/prisma/schema.prisma
+index 519fb25..9a3e994 100644
+--- a/server/prisma/schema.prisma
++++ b/server/prisma/schema.prisma
+@@ -15,12 +15,12 @@ datasource db {
+ 
+ model Schedule {
+   id          Int     @id @default(autoincrement())
+-  type        String
+-  date        String
++  type        String // Should be ENUM
++  date        String // Should be Date/Datetime
+   time        String
+   place       String
+   durationMin Int
+-  activity    String
++  activity    String // Should be ENUM
+   groups      Group[] @relation("GroupSchedules")
+ }
+ 
+@@ -30,15 +30,15 @@ model Group {
+   users     User[]     @relation("UserGroups")
+   schedules Schedule[] @relation("GroupSchedules")
+ }
+-
++// TODO: add cascade delete/update
+ model User {
+   id        Int      @id @default(autoincrement())
+   email     String   @unique
+   password  String
+   name      String
+   surname   String
+-  birthdate String
+-  role      String
++  birthdate String  // Should be Date
++  role      String  // Should be ENUM
+   photoURL  String?
+   isActive  Boolean  @default(true)
+   groups    Group[]  @relation("UserGroups")
+diff --git a/server/src/app.controller.ts b/server/src/app.controller.ts
+index cce879e..05e4898 100644
+--- a/server/src/app.controller.ts
++++ b/server/src/app.controller.ts
+@@ -1,9 +1,10 @@
+ import { Controller, Get } from '@nestjs/common';
+ import { AppService } from './app.service';
+ 
++// TODO: Remove boilerplate code 
+ @Controller()
+ export class AppController {
+-  constructor(private readonly appService: AppService) {}
++  constructor(private readonly appService: AppService) { }
+ 
+   @Get()
+   getHello(): string {
+diff --git a/server/src/app.module.ts b/server/src/app.module.ts
+index d6d220b..a63c2bf 100644
+--- a/server/src/app.module.ts
++++ b/server/src/app.module.ts
+@@ -1,6 +1,7 @@
+ import { Module } from '@nestjs/common';
+ import { AppController } from './app.controller';
+ import { AppService } from './app.service';
++// TODO: Remove unused code/npm packages
+ import { TypeOrmModule } from '@nestjs/typeorm';
+ import { UsersModule } from './users/users.module';
+ import { ScheduleModule } from './schedule/schedule.module';
+diff --git a/server/src/app.service.ts b/server/src/app.service.ts
+index 927d7cc..1d943c5 100644
+--- a/server/src/app.service.ts
++++ b/server/src/app.service.ts
+@@ -1,5 +1,6 @@
+ import { Injectable } from '@nestjs/common';
+ 
++// TODO: Remove boilerplate code 
+ @Injectable()
+ export class AppService {
+   getHello(): string {
+diff --git a/server/src/auth/auth.controller.ts b/server/src/auth/auth.controller.ts
+index 7bc128d..41e5345 100644
+--- a/server/src/auth/auth.controller.ts
++++ b/server/src/auth/auth.controller.ts
+@@ -4,11 +4,13 @@ import { SignInUserDto } from './dto/sign-in.dto';
+ 
+ @Controller('auth')
+ export class AuthController {
+-  constructor(private authService: AuthService) {}
++  constructor(private authService: AuthService) { }
+ 
+   @HttpCode(HttpStatus.OK)
+   @Post('login')
+   signIn(@Body() signInDto: SignInUserDto) {
+     return this.authService.signIn(signInDto.email, signInDto.password);
+   }
++
++  // TODO: add signUp/signOut
+ }
+diff --git a/server/src/auth/auth.service.ts b/server/src/auth/auth.service.ts
+index 4f0b954..9ebfb75 100644
+--- a/server/src/auth/auth.service.ts
++++ b/server/src/auth/auth.service.ts
+@@ -8,16 +8,19 @@ export class AuthService {
+   constructor(
+     private usersService: UsersService,
+     private jwtService: JwtService,
+-  ) {}
++  ) { }
+ 
+   async signIn(email: string, password: string): Promise<any> {
+     console.log(email);
+ 
+     const user = await this.usersService.findUserByEmail(email);
+     if (!user) {
++      // TODO: insecure to told user that email or password is wrong. Whould be better to tell email or password is incorrect
++      // TODO: throw error instead of console,log
+       console.log('Неверный email ');
+     }
+ 
++    // TODO: null?.password will throw an error
+     const isMatch = await bcrypt.compare(password, user.password);
+     if (!isMatch) {
+       console.log('Неверный пароль ');
+@@ -27,8 +30,10 @@ export class AuthService {
+     const payload = { sub: user.id, email: user.email };
+     return {
+       access_token: await this.jwtService.signAsync(payload),
++      // TODO: add refresh token
+       userInfo: {
+         id: user.id,
++        // TODO: we should not return password to client cause it's insecure
+         password: user.password,
+         email: user.email,
+         name: user.name,
+diff --git a/server/src/groups/groups.controller.ts b/server/src/groups/groups.controller.ts
+index 0531870..e58ba34 100644
+--- a/server/src/groups/groups.controller.ts
++++ b/server/src/groups/groups.controller.ts
+@@ -13,11 +13,12 @@ import { UpdateGroupDto } from './dto/update-group.dto';
+ 
+ @Controller('groups')
+ export class GroupsController {
+-  constructor(private readonly groupsService: GroupsService) {}
++  constructor(private readonly groupsService: GroupsService) { }
+ 
+   @Post()
+   create(@Body() createGroupDto: CreateGroupDto) {
+-    console.log(createGroupDto)
++    // TODO: remove console.log
++    console.log(createGroupDto);
+     return this.groupsService.create(createGroupDto);
+   }
+ 
+@@ -31,6 +32,7 @@ export class GroupsController {
+     return this.groupsService.findOne(+id);
+   }
+ 
++  // TODO: remove async
+   @Get('user/:id/schedule')
+   async getUserSchedule(@Param('id') id: number) {
+     return await this.groupsService.findUserSchedule(+id);
+diff --git a/server/src/groups/groups.service.ts b/server/src/groups/groups.service.ts
+index 0ac2454..2681e88 100644
+--- a/server/src/groups/groups.service.ts
++++ b/server/src/groups/groups.service.ts
+@@ -4,11 +4,12 @@ import { PrismaService } from 'prisma/prisma.service';
+ import { CreateGroupDto } from './dto/create-group.dto';
+ import { UpdateGroupDto } from './dto/update-group.dto';
+ 
++// TODO: Why we need ?
+ const prisma = new PrismaClient();
+ 
+ @Injectable()
+ export class GroupsService {
+-  constructor(private prisma: PrismaService) {}
++  constructor(private prisma: PrismaService) { }
+ 
+   async create(createGroupDto: CreateGroupDto) {
+     console.log(createGroupDto);
+@@ -19,13 +20,13 @@ export class GroupsService {
+         name,
+         users: users
+           ? {
+-              connect: users.map((userId) => ({ id: userId })),
+-            }
++            connect: users.map((userId) => ({ id: userId })),
++          }
+           : undefined,
+         schedules: schedules
+           ? {
+-              connect: schedules.map((scheduleId) => ({ id: scheduleId })),
+-            }
++            connect: schedules.map((scheduleId) => ({ id: scheduleId })),
++          }
+           : undefined,
+       },
+     });
+@@ -84,6 +85,7 @@ export class GroupsService {
+ 
+     const { users, schedules, ...groupData } = updateGroupDto;
+ 
++    // TODO: ?
+     const updateData: any = {
+       ...groupData,
+     };
+diff --git a/server/src/main.ts b/server/src/main.ts
+index 81cfc13..b048a42 100644
+--- a/server/src/main.ts
++++ b/server/src/main.ts
+@@ -3,12 +3,16 @@ import { AppModule } from './app.module';
+ 
+ async function bootstrap() {
+   const app = await NestFactory.create(AppModule);
++  // TODO: Move to some separate constants CORSOptions or just use app.enableCors()
+   app.enableCors({
+     origin: 'http://localhost:3000', // Frontend origin
+     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+     credentials: true, // If you need cookies or HTTP auth
+     allowedHeaders: 'Content-Type, Authorization, X-Requested-With',
+   });
++  // TODO: Port should be defined from env file
++  // TODO: Add global filters, validation pipes, global prefix and versioning
++
+   await app.listen(3008);
+ }
+ bootstrap();
+diff --git a/server/src/schedule/dto/create-schedule.dto.ts b/server/src/schedule/dto/create-schedule.dto.ts
+index 9986e69..1b4ee4f 100644
+--- a/server/src/schedule/dto/create-schedule.dto.ts
++++ b/server/src/schedule/dto/create-schedule.dto.ts
+@@ -5,5 +5,6 @@ export class CreateScheduleDto {
+   place: string;
+   durationMin: number;
+   activity: string;
++  // Why it optional?
+   groups?: number[];
+ }
+diff --git a/server/src/schedule/schedule.controller.ts b/server/src/schedule/schedule.controller.ts
+index 4c68f3a..5752874 100644
+--- a/server/src/schedule/schedule.controller.ts
++++ b/server/src/schedule/schedule.controller.ts
+@@ -13,7 +13,7 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
+ 
+ @Controller('schedule')
+ export class ScheduleController {
+-  constructor(private readonly scheduleService: ScheduleService) {}
++  constructor(private readonly scheduleService: ScheduleService) { }
+ 
+   @Post()
+   create(@Body() createScheduleDto: CreateScheduleDto) {
+@@ -27,6 +27,7 @@ export class ScheduleController {
+ 
+   @Get(':id')
+   findOne(@Param('id') id: string) {
++    // TODO: don't cast to number. Try to use class-transformer for that puprpose
+     return this.scheduleService.findOne(+id);
+   }
+ 
+@@ -36,7 +37,10 @@ export class ScheduleController {
+   }
+ 
+   @Patch(':id')
+-  update(@Param('id') id: string, @Body() updateScheduleDto: UpdateScheduleDto) {
++  update(
++    @Param('id') id: string,
++    @Body() updateScheduleDto: UpdateScheduleDto,
++  ) {
+     return this.scheduleService.update(+id, updateScheduleDto);
+   }
+ 
+diff --git a/server/src/schedule/schedule.service.ts b/server/src/schedule/schedule.service.ts
+index 8853a48..f0d34b5 100644
+--- a/server/src/schedule/schedule.service.ts
++++ b/server/src/schedule/schedule.service.ts
+@@ -6,9 +6,10 @@ import { PrismaService } from 'prisma/prisma.service';
+ 
+ @Injectable()
+ export class ScheduleService {
+-  constructor(private prisma: PrismaService) {}
++  constructor(private prisma: PrismaService) { }
+ 
+   async create(createScheduleDto: CreateScheduleDto) {
++    // TODO: use rest operator
+     const { type, date, time, place, durationMin, activity, groups } =
+       createScheduleDto;
+ 
+@@ -22,13 +23,14 @@ export class ScheduleService {
+         activity,
+         groups: groups
+           ? {
+-              connect: groups.map((groupId) => ({ id: groupId })),
+-            }
++            connect: groups.map((groupId) => ({ id: groupId })),
++          }
+           : undefined,
+       },
+     });
+   }
+ 
++  // TODO: remove  Promise<any[]>
+   async findAll(): Promise<any[]> {
+     return await this.prisma.schedule.findMany({
+       include: {
+diff --git a/server/src/users/dto/create-user.dto.ts b/server/src/users/dto/create-user.dto.ts
+index 6611758..a8fdf48 100644
+--- a/server/src/users/dto/create-user.dto.ts
++++ b/server/src/users/dto/create-user.dto.ts
+@@ -29,6 +29,7 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+ //   groups?: number[]; // массив идентификаторов групп
+ // }
+ 
++// TODO use class validator
+ export class CreateUserDto {
+   name: string;
+   surname: string;
+diff --git a/server/src/users/dto/update-user.dto.ts b/server/src/users/dto/update-user.dto.ts
+index 4bbeeb7..4c7f0f6 100644
+--- a/server/src/users/dto/update-user.dto.ts
++++ b/server/src/users/dto/update-user.dto.ts
+@@ -1,3 +1,5 @@
++// TODO: use mapped types PartialType
++
+ export class UpdateUserDto {
+   name?: string;
+   surname?: string;
+diff --git a/server/src/users/entities/user.entity.ts b/server/src/users/entities/user.entity.ts
+index 43450fa..903b321 100644
+--- a/server/src/users/entities/user.entity.ts
++++ b/server/src/users/entities/user.entity.ts
+@@ -36,6 +36,7 @@ export class User {
+   @Column({ nullable: true })
+   photoURL: string;
+ 
++  // TODO: remove russian commets
+   // Связь "многие ко многим" с группами
+   @ManyToMany(() => Group, (group) => group.users)
+   @JoinTable() // Промежуточная таблица для связи "многие ко многим"
+diff --git a/server/src/users/mockNewUser.ts b/server/src/users/mockNewUser.ts
+index 28b4aa0..c182d9b 100644
+--- a/server/src/users/mockNewUser.ts
++++ b/server/src/users/mockNewUser.ts
+@@ -1,3 +1,4 @@
++// TODO: move to mocks folder
+ export const MockUser = {
+     "name": "Yana",
+     "surname": "K",
+diff --git a/server/src/users/users.controller.ts b/server/src/users/users.controller.ts
+index 9ab1e4b..994ca24 100644
+--- a/server/src/users/users.controller.ts
++++ b/server/src/users/users.controller.ts
+@@ -11,9 +11,10 @@ import { UsersService } from './users.service';
+ import { CreateUserDto } from './dto/create-user.dto';
+ import { UpdateUserDto } from './dto/update-user.dto';
+ 
++// TODO: add status codes, Swagger docs
+ @Controller('users')
+ export class UsersController {
+-  constructor(private readonly usersService: UsersService) {}
++  constructor(private readonly usersService: UsersService) { }
+ 
+   @Post()
+   create(@Body() createUserDto: CreateUserDto) {
+@@ -30,12 +31,14 @@ export class UsersController {
+     return this.usersService.findOne(+id);
+   }
+ 
++  // TODO: Add guards, since everebody can change your entity
+   @Patch(':id')
+   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+     console.log(id);
+     return this.usersService.update(+id, updateUserDto);
+   }
+ 
++  // TODO: Add guards, since everebody can change your entity
+   @Delete(':id')
+   remove(@Param('id') id: string) {
+     return this.usersService.remove(+id);
+diff --git a/server/src/users/users.service.ts b/server/src/users/users.service.ts
+index 7baa91b..7fb3968 100644
+--- a/server/src/users/users.service.ts
++++ b/server/src/users/users.service.ts
+@@ -5,23 +5,32 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
+ import { PrismaService } from 'prisma/prisma.service';
+ import * as bcrypt from 'bcrypt';
+ 
++// TODO: add try/catch where needed
+ @Injectable()
+ export class UsersService {
+-  constructor(private prisma: PrismaService) {}
++  // TODO: add readonly access modification
++  constructor(private prisma: PrismaService) { }
+ 
+   async create(createUserDto: CreateUserDto): Promise<User> {
++    // TODO: FIX `info` -> user
+     const { password, groups, ...info } = createUserDto;
++    // TODO: move to contacts folder
+     const salt = 10;
++    // TODO: use password variable instead of createUserDto.password
+     const hash = await bcrypt.hash(createUserDto.password, salt);
+ 
++    // TODO: readme https://eslint.org/docs/latest/rules/no-return-await
+     return await this.prisma.user.create({
+       data: {
+         ...info,
+-        groups: groups
+-          ? {
+-              connect: groups.map((groupId) => ({ id: groupId })),
+-            }
+-          : undefined,
++        // groups: groups
++        //   ? {
++        //       connect: groups.map((groupId) => ({ id: groupId })),
++        //     }
++        //   : undefined,
++        ...(groups && {
++          connect: groups.map((groupId) => ({ id: groupId })),
++        }),
+         password: hash,
+       },
+       include: {
+@@ -30,6 +39,7 @@ export class UsersService {
+     });
+   }
+ 
++  // TODO: add foltering, sorting, pagination
+   async findAll(): Promise<any[]> {
+     return await this.prisma.user.findMany({
+       include: {
+@@ -40,12 +50,15 @@ export class UsersService {
+ 
+   async findOne(id: number): Promise<User> {
+     console.log(id);
++
+     const result = await this.prisma.user.findUnique({
+       where: { id },
+       include: { groups: true },
+     });
+ 
++    // Use findUniqueOrThrow instead of findUnique and handling 404
+     if (!result) {
++      // TODO: bad status code (404). Use NotFoundExeption
+       throw new HttpException(`Пользователь с ID ${id} не найден`, 400);
+     }
+     return result;
+@@ -58,6 +71,7 @@ export class UsersService {
+         include: { groups: true },
+       });
+ 
++      // TODO: try to avoid nested if/else situation
+       if (user) {
+         return user;
+       } else {
+@@ -71,6 +85,7 @@ export class UsersService {
+     }
+   }
+ 
++  // TODO: Remove redundant Promise<User>
+   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+     const user = await this.prisma.user.findUnique({
+       where: { id },
+@@ -83,10 +98,12 @@ export class UsersService {
+ 
+     const { groups, ...userData } = updateUserDto;
+ 
++    // TODO: add strict typing
+     const updateData: any = {
+       ...userData,
+     };
+ 
++    // TODO: use ...(groups && {}) syntax instead of if/else
+     if (groups) {
+       updateData.groups = {
+         disconnect: user.groups.map((group) => ({ id: +group.id })),

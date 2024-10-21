@@ -4,11 +4,12 @@ import { PrismaService } from 'prisma/prisma.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 
+// TODO: Why we need ?
 const prisma = new PrismaClient();
 
 @Injectable()
 export class GroupsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createGroupDto: CreateGroupDto) {
     console.log(createGroupDto);
@@ -19,13 +20,13 @@ export class GroupsService {
         name,
         users: users
           ? {
-              connect: users.map((userId) => ({ id: userId })),
-            }
+            connect: users.map((userId) => ({ id: userId })),
+          }
           : undefined,
         schedules: schedules
           ? {
-              connect: schedules.map((scheduleId) => ({ id: scheduleId })),
-            }
+            connect: schedules.map((scheduleId) => ({ id: scheduleId })),
+          }
           : undefined,
       },
     });
@@ -84,6 +85,7 @@ export class GroupsService {
 
     const { users, schedules, ...groupData } = updateGroupDto;
 
+    // TODO: ?
     const updateData: any = {
       ...groupData,
     };

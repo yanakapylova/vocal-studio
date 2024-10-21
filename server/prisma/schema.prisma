@@ -15,12 +15,12 @@ datasource db {
 
 model Schedule {
   id          Int     @id @default(autoincrement())
-  type        String
-  date        String
+  type        String // Should be ENUM
+  date        String // Should be Date/Datetime
   time        String
   place       String
   durationMin Int
-  activity    String
+  activity    String // Should be ENUM
   groups      Group[] @relation("GroupSchedules")
 }
 
@@ -30,15 +30,15 @@ model Group {
   users     User[]     @relation("UserGroups")
   schedules Schedule[] @relation("GroupSchedules")
 }
-
+// TODO: add cascade delete/update
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   name      String
   surname   String
-  birthdate String
-  role      String
+  birthdate String  // Should be Date
+  role      String  // Should be ENUM
   photoURL  String?
   isActive  Boolean  @default(true)
   groups    Group[]  @relation("UserGroups")

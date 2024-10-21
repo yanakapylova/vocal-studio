@@ -13,11 +13,12 @@ import { UpdateGroupDto } from './dto/update-group.dto';
 
 @Controller('groups')
 export class GroupsController {
-  constructor(private readonly groupsService: GroupsService) {}
+  constructor(private readonly groupsService: GroupsService) { }
 
   @Post()
   create(@Body() createGroupDto: CreateGroupDto) {
-    console.log(createGroupDto)
+    // TODO: remove console.log
+    console.log(createGroupDto);
     return this.groupsService.create(createGroupDto);
   }
 
@@ -31,6 +32,7 @@ export class GroupsController {
     return this.groupsService.findOne(+id);
   }
 
+  // TODO: remove async
   @Get('user/:id/schedule')
   async getUserSchedule(@Param('id') id: number) {
     return await this.groupsService.findUserSchedule(+id);

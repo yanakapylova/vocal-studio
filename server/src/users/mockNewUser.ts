@@ -1,3 +1,4 @@
+// TODO: move to mocks folder
 export const MockUser = {
     "name": "Yana",
     "surname": "K",

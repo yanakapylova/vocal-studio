@@ -5,5 +5,6 @@ export class CreateScheduleDto {
   place: string;
   durationMin: number;
   activity: string;
+  // Why it optional?
   groups?: number[];
 }

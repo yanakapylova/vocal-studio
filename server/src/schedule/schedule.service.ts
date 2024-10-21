@@ -6,9 +6,10 @@ import { PrismaService } from 'prisma/prisma.service';
 
 @Injectable()
 export class ScheduleService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async create(createScheduleDto: CreateScheduleDto) {
+    // TODO: use rest operator
     const { type, date, time, place, durationMin, activity, groups } =
       createScheduleDto;
 
@@ -22,13 +23,14 @@ export class ScheduleService {
         activity,
         groups: groups
           ? {
-              connect: groups.map((groupId) => ({ id: groupId })),
-            }
+            connect: groups.map((groupId) => ({ id: groupId })),
+          }
           : undefined,
       },
     });
   }
 
+  // TODO: remove  Promise<any[]>
   async findAll(): Promise<any[]> {
     return await this.prisma.schedule.findMany({
       include: {

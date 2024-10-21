@@ -13,7 +13,7 @@ import { UpdateScheduleDto } from './dto/update-schedule.dto';
 
 @Controller('schedule')
 export class ScheduleController {
-  constructor(private readonly scheduleService: ScheduleService) {}
+  constructor(private readonly scheduleService: ScheduleService) { }
 
   @Post()
   create(@Body() createScheduleDto: CreateScheduleDto) {
@@ -27,6 +27,7 @@ export class ScheduleController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
+    // TODO: don't cast to number. Try to use class-transformer for that puprpose
     return this.scheduleService.findOne(+id);
   }
 
@@ -36,7 +37,10 @@ export class ScheduleController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateScheduleDto: UpdateScheduleDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateScheduleDto: UpdateScheduleDto,
+  ) {
     return this.scheduleService.update(+id, updateScheduleDto);
   }
 

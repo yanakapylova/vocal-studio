@@ -36,6 +36,7 @@ export class User {
   @Column({ nullable: true })
   photoURL: string;
 
+  // TODO: remove russian commets
   // Связь "многие ко многим" с группами
   @ManyToMany(() => Group, (group) => group.users)
   @JoinTable() // Промежуточная таблица для связи "многие ко многим"
