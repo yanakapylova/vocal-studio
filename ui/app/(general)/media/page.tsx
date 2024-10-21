@@ -1,6 +1,4 @@
-import { Banner } from "@/app/components/banner/Banner";
 import styles from "./page.module.scss";
-
 
 const Media = () => {
   const mediaList = [
@@ -14,8 +12,8 @@ const Media = () => {
   return (
     <main>
       <div className={`${styles.wrapperMedia} wrapper grid-with-pictures`}>
-        {mediaList.map((src, key) => (
-          <div className={styles.card}>
+        {mediaList.map((src) => (
+          <div key={src} className={styles.card}>
             <iframe
               width="560"
               height="315"

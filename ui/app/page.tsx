@@ -41,11 +41,13 @@ const About = () => {
         <div className={`${styles.wrapperAbout} wrapper`}>
           {list.map((item, key) => {
             return (
-              <div className={styles.aboutItem}>
+              <div className={styles.aboutItem} key={key}>
                 <div className={styles.text}>{item.text}</div>
                 <div className={styles.imgContainer}>
-                  {item.images.map((image: string, key: any) => {
-                    return <img src={"img/about/" + image} alt="" />;
+                  {item.images.map((image: string) => {
+                    return (
+                      <img src={"/img/about/" + image} alt="" key={image} />
+                    );
                   })}
                 </div>
               </div>

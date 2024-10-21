@@ -18,7 +18,7 @@ const AddScheduleEvent = () => {
 
   useEffect(() => {
     dispatch(fetchGroups());
-  }, []);
+  }, [dispatch]);
 
   return (
     <form

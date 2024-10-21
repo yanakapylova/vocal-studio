@@ -29,7 +29,7 @@ export const AddConstantSchedule = () => {
 
   useEffect(() => {
     dispatch(fetchGroups());
-  }, []);
+  }, [dispatch]);
 
   return (
     <form
