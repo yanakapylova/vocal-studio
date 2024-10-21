@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -8,22 +12,17 @@ export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async signIn(email: string, password: string): Promise<any> {
-    console.log(email);
-
     const user = await this.usersService.findUserByEmail(email);
-    if (!user) {
-      // TODO: insecure to told user that email or password is wrong. Whould be better to tell email or password is incorrect
-      // TODO: throw error instead of console,log
-      console.log('Неверный email ');
+
+    if (!user || !user.password) {
+      throw new UnauthorizedException();
     }
 
-    // TODO: null?.password will throw an error
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      console.log('Неверный пароль ');
       throw new UnauthorizedException();
     }
 
@@ -33,8 +32,6 @@ export class AuthService {
       // TODO: add refresh token
       userInfo: {
         id: user.id,
-        // TODO: we should not return password to client cause it's insecure
-        password: user.password,
         email: user.email,
         name: user.name,
         surname: user.surname,

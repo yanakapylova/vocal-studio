@@ -1,5 +1,3 @@
-// TODO use class validator
-
 import {
   IsDate,
   IsEmail,
