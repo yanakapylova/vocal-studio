@@ -9,27 +9,19 @@ export class ScheduleService {
   constructor(private prisma: PrismaService) {}
 
   async create(createScheduleDto: CreateScheduleDto) {
-    const { type, date, time, place, durationMin, activity, groups } =
-      createScheduleDto;
+    const { groups, ...newUser } = createScheduleDto;
 
     return await this.prisma.schedule.create({
       data: {
-        type,
-        date,
-        time,
-        place,
-        durationMin,
-        activity,
-        groups: groups
-          ? {
-              connect: groups.map((groupId) => ({ id: groupId })),
-            }
-          : undefined,
+        ...newUser,
+        ...(groups && {
+          connect: groups.map((groupId) => ({ id: groupId })),
+        }),
       },
     });
   }
 
-  async findAll(): Promise<any[]> {
+  async findAll() {
     return await this.prisma.schedule.findMany({
       include: {
         groups: true,
@@ -55,13 +47,13 @@ export class ScheduleService {
       },
     });
 
-    return schedules; // Возвращаем найденные расписания
+    return schedules;
   }
 
   async findOne(id: number): Promise<Schedule> {
     const result = await this.prisma.schedule.findUnique({
       where: { id },
-      include: { groups: true }, // Включаем группы, если нужно
+      include: { groups: true },
     });
 
     if (!result) {
@@ -70,50 +62,42 @@ export class ScheduleService {
     return result;
   }
 
-  async update(
-    id: number,
-    updateScheduleDto: UpdateScheduleDto,
-  ): Promise<Schedule> {
-    const existingSchedule = await this.prisma.schedule.findUnique({
-      where: { id },
-      include: { groups: true },
-    });
+  async update(id: number, updateScheduleDto: UpdateScheduleDto) {
+    try {
+      const existingSchedule = await this.prisma.schedule.findUniqueOrThrow({
+        where: { id },
+        include: { groups: true },
+      });
+      const { groups, ...scheduleData } = updateScheduleDto;
 
-    if (!existingSchedule) {
-      throw new HttpException(`Расписание с ID ${id} не найдено`, 400);
-    }
-
-    const { groups, ...scheduleData } = updateScheduleDto;
-
-    const updateData: any = {
-      ...scheduleData,
-    };
-
-    if (groups) {
-      updateData.groups = {
-        set: existingSchedule.groups.map((group) => ({ id: group.id })), // Удаляем старые группы
-        connect: groups.map((groupId) => ({ id: groupId })), // Подключаем новые группы
+      const updateData: any = {
+        ...scheduleData,
+        ...(groups && {
+          set: existingSchedule.groups.map((group) => ({ id: group.id })),
+          connect: groups.map((groupId) => ({ id: groupId })),
+        }),
       };
-    }
 
-    return await this.prisma.schedule.update({
-      where: { id },
-      data: updateData,
-    });
+      return this.prisma.schedule.update({
+        where: { id },
+        data: updateData,
+      });
+    } catch {
+      console.log(`Расписание с ID ${id} не найдено`);
+    }
   }
 
-  // Метод для удаления расписания
-  async remove(id: number): Promise<void> {
-    const existingSchedule = await this.prisma.schedule.findUnique({
-      where: { id },
-    });
+  async remove(id: number) {
+    try {
+      await this.prisma.schedule.findUniqueOrThrow({
+        where: { id },
+      });
 
-    if (!existingSchedule) {
-      throw new HttpException(`Расписание с ID ${id} не найдено`, 400);
+      await this.prisma.schedule.delete({
+        where: { id },
+      });
+    } catch {
+      console.log(`Расписание с ID ${id} не найдено`);
     }
-
-    await this.prisma.schedule.delete({
-      where: { id },
-    });
   }
 }

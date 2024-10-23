@@ -1,42 +1,37 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
-
-// export class CreateUserDto {
-//
-//   @IsString()
-//   name: string;
-
-//
-//   @IsString()
-//   surname: string;
-
-//
-//   @IsEmail()
-//   email: string;
-
-//
-//   @MinLength(6)
-//   password: string;
-
-//
-//   @IsString()
-//   role: string;
-
-//
-//   birthdate: string; // или Date, если используете конкретный формат даты
-
-//   photoURL?: string; // необязательное поле
-
-//   groups?: number[]; // массив идентификаторов групп
-// }
+import {
+  IsDate,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 export class CreateUserDto {
+  @IsString()
+  @IsNotEmpty()
   name: string;
+
+  @IsString()
+  @IsNotEmpty()
   surname: string;
+
+  @IsEmail()
+  @IsNotEmpty()
   email: string;
+
+  @MinLength(6)
+  @IsNotEmpty()
   password: string;
+
+  @IsString()
+  @IsNotEmpty()
   role: string;
+
+  @IsDate()
+  @IsNotEmpty()
   birthdate: string;
+
   photoURL?: string;
-  isActive: boolean;
+
   groups?: number[];
 }
