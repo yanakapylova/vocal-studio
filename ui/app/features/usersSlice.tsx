@@ -65,12 +65,12 @@ export const createUser = createAsyncThunk(
 
     if (!response.ok) {
       console.log("Не удалось создать пользователя");
-      return { data: null, statusCode: response.status };
+      return null
     }
 
     console.log(`Пользователь ${name} ${surname} успешно создан`);
     const data = await response.json();
-    return { data: data, statusCode: response.status };
+    return data
   }
 );
 
@@ -83,10 +83,10 @@ export const deleteUser = createAsyncThunk(
     });
     if (!response.ok) {
       console.log("Такого пользователя не существует");
-      return { id: null, statusCode: +response.status };
+      return null;
     }
     console.log(`Пользователь успешно удален`);
-    return { id: id, statusCode: +response.status };
+    return id;
   }
 );
 
@@ -108,10 +108,10 @@ export const updateUserName = createAsyncThunk(
 
     if (!response.ok) {
       console.log(`Не удалось обновить информация о пользователе`);
-      return { data: null, statusCode: response.status };
+      return null;
     } else {
       console.log(`Инофрмация о пользователе успешно обновлена`);
-      return { data: data, statusCode: response.status };
+      data;
     }
   }
 );
@@ -143,10 +143,10 @@ export const updateUser = createAsyncThunk(
 
     if (!response.ok) {
       console.log(`Не удалось обновить информация о пользователе`);
-      return { data: null, statusCode: response.status };
+      return null
     } else {
       console.log(`Инофрмация о пользователе успешно обновлена`);
-      return { data: data, statusCode: response.status };
+      return data;
     }
   }
 );
@@ -177,7 +177,7 @@ export const signIn = createAsyncThunk(
     localStorage.setItem("jwtToken", "Bearer " + data["access_token"]);
     console.log("Добро пожаловать!");
 
-    return { data: data["userInfo"], statusCode: +response.status };
+    return data["userInfo"];
   }
 );
 
@@ -221,16 +221,16 @@ export const usersSlice = createSlice({
   name: "users",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
+  extraReducers: (builder: any) => {
     // получить всех пользователей (только для админа)
-    builder.addCase(fetchUsers.fulfilled, (state, action) => {
+    builder.addCase(fetchUsers.fulfilled, (state: any, action: any) => {
       const data = action.payload;
       if (data) {
         state.entities = data;
       }
     });
 
-    builder.addCase(fetchUserbyId.fulfilled, (state, action) => {
+    builder.addCase(fetchUserbyId.fulfilled, (state: any, action: any) => {
       const data = action.payload;
       if (data) {
         state.activeUser = {
@@ -247,8 +247,8 @@ export const usersSlice = createSlice({
     });
 
     // создать нового пользователя
-    builder.addCase(createUser.fulfilled, (state, action) => {
-      const { data, statusCode } = action.payload;
+    builder.addCase(createUser.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
 
       if (data) {
         state.entities.push(data);
@@ -256,17 +256,17 @@ export const usersSlice = createSlice({
     });
 
     // удалить пользователя
-    builder.addCase(deleteUser.fulfilled, (state, action) => {
-      const { id, statusCode } = action.payload;
+    builder.addCase(deleteUser.fulfilled, (state: any, action: any) => {
+      const id = action.payload;
 
       if (id) {
-        state.entities = state.entities.filter((entity) => entity.id !== id);
+        state.entities = state.entities.filter((entity: any) => entity.id !== id);
       }
     });
 
     // вход в аккаунт
-    builder.addCase(signIn.fulfilled, (state, action) => {
-      const { data, statusCode } = action.payload;
+    builder.addCase(signIn.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
 
       if (data) {
         state.activeUser = {
@@ -285,7 +285,7 @@ export const usersSlice = createSlice({
     });
 
     // инф-ия об активном пользователе
-    builder.addCase(setActiveUser.fulfilled, (state, action) => {
+    builder.addCase(setActiveUser.fulfilled, (state: any, action: any) => {
       const data = action.payload;
 
       if (data) {

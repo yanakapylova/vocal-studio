@@ -28,7 +28,7 @@ const Admin = () => {
   useEffect(() => {
     dispatch(fetchGroups());
     dispatch(fetchUsers());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (usersList.length > 0 && groupsList.length > 0) {
@@ -109,7 +109,7 @@ const GroupList = ({ groupedUsers, groupName }: any) => {
   return (
     <ul>
       {groupedUsers[groupName].map((user: User) => (
-        <StudentItem user={user} />
+        <StudentItem user={user} key={user.id} />
       ))}
     </ul>
   );

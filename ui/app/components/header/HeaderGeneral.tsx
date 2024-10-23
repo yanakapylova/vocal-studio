@@ -8,7 +8,6 @@ export const HeaderGeneral = () => {
         <img className="logo" src="/img/logo.jpg" alt="" />
       </Link>
       <NavGeneral />
-      {/* <UserInfo /> */}
     </header>
   );
 };

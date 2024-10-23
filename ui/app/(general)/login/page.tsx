@@ -22,10 +22,11 @@ const Login = () => {
           onSubmit={async (e) => {
             e.preventDefault();
             const res: any = await dispatch(signIn({ email, password }));
-            console.log(res);
 
-            if (res.payload.statusCode == 200) {
-              router.push("/profile");
+            if (res.payload) {
+              if (res.payload.statusCode == 200) {
+                router.push("/profile");
+              }
             }
           }}
         >
