@@ -1,4 +1,3 @@
-import { Banner } from "@/app/components/banner/Banner";
 import styles from "./page.module.scss";
 
 

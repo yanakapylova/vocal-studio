@@ -1,9 +1,10 @@
+import Image from "next/image";
 import styles from "./page.module.scss";
 
 const UserImage = ({ user }: any) => {
   return (
     <div className={styles.profileImage}>
-      {user?.photoURL && <img src={user?.photoURL} alt="Profile" />}
+      {user?.photoURL && <Image src={user?.photoURL} alt="Profile" />}
 
       <div className={styles.newImageSetting}>
         <label className={styles.customFileUpload}>

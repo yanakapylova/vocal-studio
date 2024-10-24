@@ -1,4 +1,3 @@
-import { Banner } from "@/app/components/banner/Banner";
 import styles from "./page.module.scss";
 
 const teamList = [
@@ -22,11 +21,16 @@ const teamList = [
   },
 ];
 
-const TeamComponent = (props: any) => {
+const TeamComponent = (props: {
+  link: string;
+  img: string;
+  title: string;
+  desc: string;
+}) => {
   return (
     <a className={styles.card} href={props.link}>
       <div className={styles.image}>
-        <img src={"img/team/" + props.img} alt="" />
+        <img src={`img/team/` + props.img} alt="Picture of the teacher" />
       </div>
       <div className={styles.name}>{props.title}</div>
       <div className={styles.desc}>{props.desc}</div>
@@ -34,7 +38,7 @@ const TeamComponent = (props: any) => {
   );
 };
 
-export const Team = () => {
+const Team = () => {
   return (
     <main>
       <div className={styles.wrapperTeam}>
@@ -43,7 +47,8 @@ export const Team = () => {
             title={teamMember.title}
             desc={teamMember.desc}
             img={teamMember.img}
-            // link={teamMember.link}
+            link="#"
+            key={teamMember.title + key}
           />
         ))}
       </div>

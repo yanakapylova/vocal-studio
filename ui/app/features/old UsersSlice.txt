@@ -1,18 +1,16 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Group } from "./interfaces/Group";
 import { User } from "./interfaces/User";
-import { mockUser } from "./mocks/User";
-import { mockSchedule, mockSchedule2, mockSchedule3 } from "./mocks/Schedule";
 import { Schedule } from "./interfaces/Schedule";
 
 // получение id сессии (задается после login)
-function getSessionID() {
-  const cookieArray = document.cookie.split(";");
-  const sessionIDItem = cookieArray.find(
-    (cookieItem) => cookieItem.split("=")[0] === "session_id"
-  );
-  return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
-}
+// function getSessionID() {
+//   const cookieArray = document.cookie.split(";");
+//   const sessionIDItem = cookieArray.find(
+//     (cookieItem) => cookieItem.split("=")[0] === "session_id"
+//   );
+//   return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
+// }
 
 // получить всех пользователей (только для админа)
 // export const fetchUsers = createAsyncThunk("users/fetchUsers", async () => {

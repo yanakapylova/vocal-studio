@@ -22,7 +22,7 @@ export const StudentEdit = ({ data, toggleState }: any) => {
   const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     dispatch(fetchGroups());
-  }, []);
+  }, [dispatch]);
 
   const [toBeChanged, setToBeChanged] = useState({});
 
@@ -37,7 +37,7 @@ export const StudentEdit = ({ data, toggleState }: any) => {
             className="formFields"
             onChange={(e) => {
               setName(e.target.value);
-              setToBeChanged((prev) => {
+              setToBeChanged((prev: any) => {
                 return { ...prev, name: e.target.value };
               });
             }}

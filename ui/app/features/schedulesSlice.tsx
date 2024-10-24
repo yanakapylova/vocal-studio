@@ -3,13 +3,13 @@ import { Schedule } from "./interfaces/Schedule";
 import { Group } from "./interfaces/Group";
 
 // получение id сессии (задается после login)
-function getSessionID() {
-  const cookieArray = document.cookie.split(";");
-  const sessionIDItem = cookieArray.find(
-    (cookieItem) => cookieItem.split("=")[0] === "session_id"
-  );
-  return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
-}
+// function getSessionID() {
+//   const cookieArray = document.cookie.split(";");
+//   const sessionIDItem = cookieArray.find(
+//     (cookieItem) => cookieItem.split("=")[0] === "session_id"
+//   );
+//   return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
+// }
 
 // получить всех пользователей (только для админа)
 
@@ -20,7 +20,7 @@ export const fetchSchedules = createAsyncThunk(
       method: "GET",
     });
     const data = await response.json();
-    return [data, response.status];
+    return data;
   }
 );
 
@@ -32,7 +32,7 @@ export const getSchedule = createAsyncThunk(
     });
     const data = await response.json();
     console.log(data);
-    return [data, response.status];
+    return data;
   }
 );
 
@@ -48,7 +48,7 @@ export const createSchedule = createAsyncThunk(
     groups: number[];
   }) => {
     const { type, date, time, place, durationMin, activity, groups } = info;
-    console.log(groups)
+    console.log(groups);
     const response = await fetch(`http://localhost:3008/schedule`, {
       method: "POST",
       headers: {
@@ -65,19 +65,18 @@ export const createSchedule = createAsyncThunk(
       }),
     });
     const data = await response.json();
-    console.log(data)
-    return [data, response.status];
+    console.log(data);
+    return data;
   }
 );
 
 export const deleteSchedule = createAsyncThunk(
   "schedule/deteteSchedule",
   async (id: number) => {
-    const response = await fetch(`http://localhost:3008/schedule/${id}`, {
+    await fetch(`http://localhost:3008/schedule/${id}`, {
       method: "DELETE",
     });
-    console.log(id);
-    return [id, response.status];
+    return id;
   }
 );
 
@@ -106,36 +105,36 @@ export const schedulesSlice = createSlice({
   name: "schedules",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchSchedules.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
+  extraReducers: (builder: any) => {
+    builder.addCase(fetchSchedules.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
       if (data) {
         state.entities = data;
       }
     });
 
-    builder.addCase(getSchedule.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
+    builder.addCase(getSchedule.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
       if (data) {
         state.current = data;
       }
     });
 
-    builder.addCase(createSchedule.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
+    builder.addCase(createSchedule.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
       if (data) {
-        console.log(data)
+        console.log(data);
         state.current.push(data);
       }
     });
 
-    builder.addCase(deleteSchedule.fulfilled, (state, action) => {
-      const [id, responseStatus] = action.payload;
+    builder.addCase(deleteSchedule.fulfilled, (state: any, action: any) => {
+      const id = action.payload;
       if (id) {
-        state.current = state.current.filter((event) => event.id !== id);
+        state.current = state.current.filter((event: any) => event.id !== id);
       }
 
-      console.log(id, responseStatus);
+      console.log(id);
     });
   },
 });

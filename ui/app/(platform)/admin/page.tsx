@@ -33,7 +33,7 @@ const Admin = () => {
   useEffect(() => {
     dispatch(fetchGroups());
     dispatch(fetchUsers());
-  }, []);
+  }, [dispatch]);
 
   return (
     <main>

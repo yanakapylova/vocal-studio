@@ -2,13 +2,13 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Group } from "./interfaces/Group";
 
 // получение id сессии (задается после login)
-function getSessionID() {
-  const cookieArray = document.cookie.split(";");
-  const sessionIDItem = cookieArray.find(
-    (cookieItem) => cookieItem.split("=")[0] === "session_id"
-  );
-  return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
-}
+// function getSessionID() {
+//   const cookieArray = document.cookie.split(";");
+//   const sessionIDItem = cookieArray.find(
+//     (cookieItem) => cookieItem.split("=")[0] === "session_id"
+//   );
+//   return sessionIDItem ? sessionIDItem.split("=")[1] : undefined;
+// }
 
 // получить всех пользователей (только для админа)
 
@@ -17,7 +17,7 @@ export const fetchGroups = createAsyncThunk("group/fetchGroups", async () => {
     method: "GET",
   });
   const data = await response.json();
-  return [data, response.status];
+  return data;
 });
 
 export const createGroup = createAsyncThunk(
@@ -34,7 +34,7 @@ export const createGroup = createAsyncThunk(
       }),
     });
     const data = await response.json();
-    return [data, response.status];
+    return data;
   }
 );
 
@@ -61,16 +61,16 @@ export const groupsSlice = createSlice({
   name: "groups",
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder.addCase(fetchGroups.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
+  extraReducers: (builder: any) => {
+    builder.addCase(fetchGroups.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
       if (data) {
         state.entities = data;
       }
     });
 
-    builder.addCase(createGroup.fulfilled, (state, action) => {
-      const [data, responseStatus] = action.payload;
+    builder.addCase(createGroup.fulfilled, (state: any, action: any) => {
+      const data = action.payload;
       if (data) {
         state.entities.push(data);
       }
