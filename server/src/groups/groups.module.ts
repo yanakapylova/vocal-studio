@@ -3,24 +3,24 @@ import { GroupsService } from './groups.service';
 import { GroupsController } from './groups.controller';
 import { PrismaService } from 'prisma/prisma.service';
 
-import { CacheModule, CacheModuleOptions } from '@nestjs/cache-manager';
-import { createClient } from 'redis';
-import { redisStore } from 'cache-manager-redis-store';
+import { CacheModule, CacheStore } from '@nestjs/cache-manager';
+// import { redisStore } from 'cache-manager-redis-store';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
-    CacheModule.registerAsync<CacheModuleOptions>({
+    CacheModule.registerAsync({
       useFactory: async () => {
-        const client = createClient({
-          url: 'redis://localhost:6379',
+        const store = await redisStore({
+          socket: {
+            host: 'localhost',
+            port: 6379,
+          },
         });
-        await client.connect();
 
         return {
-          store: redisStore,
-          url: 'redis://localhost:6379',
-          ttl: 600,
-          isGlobal: true,
+          store: store as unknown as CacheStore,
+          ttl: 3 * 60000, // 3 minutes (milliseconds)
         };
       },
     }),

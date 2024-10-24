@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaService } from 'prisma/prisma.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
+import { createCache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class GroupsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: typeof createCache,
+  ) {}
 
   async create(createGroupDto: CreateGroupDto) {
     const { name, users, schedules } = createGroupDto;
@@ -24,7 +29,17 @@ export class GroupsService {
   }
 
   async findAll() {
-    return await this.prisma.group.findMany();
+    // redis
+    const value = await this.cacheManager().get('allUsers'); // ? Retrieve data from the cache
+    if (value) {
+      console.log('"allUsers" has been taken from cache');
+      return value;
+    } else {
+      const result = await this.prisma.group.findMany();
+      await this.cacheManager().set('allUsers', result); //  ? Set data in the cache
+      console.log("'allUsers' has been cached");
+      return result;
+    }
   }
 
   async findOne(id: number) {
