@@ -12,11 +12,7 @@ import { GroupsService } from './groups.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 
-import { CacheInterceptor } from '@nestjs/cache-manager';
-import { UseInterceptors } from '@nestjs/common/decorators';
-
 @Controller('groups')
-@UseInterceptors(CacheInterceptor)
 export class GroupsController {
   constructor(private readonly groupsService: GroupsService) {}
 
