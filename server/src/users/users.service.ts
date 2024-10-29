@@ -21,6 +21,8 @@ export class UsersService {
     const { password, groups, ...user } = createUserDto;
     const hash = await bcrypt.hash(password, salt);
 
+    await this.cacheManager.del('allUsers');
+    Logger.log("allUsers cache has been removed")
     return this.prisma.user.create({
       data: {
         ...user,
@@ -41,7 +43,7 @@ export class UsersService {
     const value = await this.cacheManager.get('allUsers');
 
     if (value) {
-      console.log('"allUsers" has been taken from cache');
+      Logger.log('"allUsers" has been taken from cache');
       return value;
     } else {
       const result = await this.prisma.user.findMany({
@@ -50,7 +52,7 @@ export class UsersService {
         },
       });
       await this.cacheManager.set('allUsers', result);
-      console.log("'allUsers' has been cached");
+      Logger.log("'allUsers' has been cached");
       return result;
     }
   }
@@ -92,6 +94,8 @@ export class UsersService {
       }),
     };
 
+    await this.cacheManager.del('allUsers');
+    Logger.log("allUsers cache has been removed")
     return await this.prisma.user.update({
       where: { id },
       data: updateData,
@@ -105,6 +109,9 @@ export class UsersService {
       await this.prisma.user.delete({
         where: { id },
       });
+
+      await this.cacheManager.del('allUsers');
+      Logger.log("allUsers cache has been removed")
     } catch {
       console.log(`Пользователь с ID ${id} не найден`);
     }

@@ -18,6 +18,8 @@ export class ScheduleService {
   async create(createScheduleDto: CreateScheduleDto) {
     const { groups, ...newUser } = createScheduleDto;
 
+    await this.cacheManager.del('allSchedule');
+    Logger.log("allSchedule cache has been removed")
     return await this.prisma.schedule.create({
       data: {
         ...newUser,
@@ -33,7 +35,7 @@ export class ScheduleService {
     const value = await this.cacheManager.get('allSchedules');
 
     if (value) {
-      console.log('"allSchedules" has been taken from cache');
+      Logger.log('"allSchedules" has been taken from cache');
       return value;
     } else {
       const result = await this.prisma.schedule.findMany({
@@ -42,7 +44,7 @@ export class ScheduleService {
         },
       });
       await this.cacheManager.set('allSchedules', result);
-      console.log("'allSchedules' has been cached");
+      Logger.log("'allSchedules' has been cached");
       return result;
     }
   }
@@ -96,6 +98,8 @@ export class ScheduleService {
         }),
       };
 
+      await this.cacheManager.del('allSchedule');
+      Logger.log("allSchedule cache has been removed")
       return this.prisma.schedule.update({
         where: { id },
         data: updateData,
@@ -114,6 +118,9 @@ export class ScheduleService {
       await this.prisma.schedule.delete({
         where: { id },
       });
+
+      await this.cacheManager.del('allSchedule');
+      Logger.log("allSchedule cache has been removed")
     } catch {
       console.log(`Расписание с ID ${id} не найдено`);
     }

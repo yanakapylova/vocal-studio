@@ -15,7 +15,8 @@ export class GroupsService {
 
   async create(createGroupDto: CreateGroupDto) {
     const { name, users, schedules } = createGroupDto;
-
+    await this.cacheManager.del('allGroups');
+    Logger.log("allGroups cache has been removed")
     return await this.prisma.group.create({
       data: {
         name,
@@ -34,12 +35,12 @@ export class GroupsService {
     const value = await this.cacheManager.get('allGroups');
 
     if (value) {
-      console.log('"allGroups" has been taken from cache');
+      Logger.log('"allGroups" has been taken from cache');
       return value;
     } else {
       const result = await this.prisma.group.findMany();
       await this.cacheManager.set('allGroups', result);
-      console.log("'allGroups' has been cached");
+      Logger.log("'allGroups' has been cached");
       return result;
     }
   }
@@ -95,6 +96,8 @@ export class GroupsService {
         }),
       };
 
+      await this.cacheManager.del('allGroups');
+      Logger.log("allGroups cache has been removed")
       return await this.prisma.group.update({
         where: { id },
         data: updateData,
@@ -113,6 +116,9 @@ export class GroupsService {
       await this.prisma.group.delete({
         where: { id },
       });
+
+      await this.cacheManager.del('allGroups');
+      Logger.log("allGroups cache has been removed")
     } catch {
       console.log(`Группа с ID ${id} не найдена`);
     }
