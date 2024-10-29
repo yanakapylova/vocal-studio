@@ -30,7 +30,7 @@ export class AuthService {
     return {
       access_token: await this.jwtService.signAsync(payload),
       // TODO: add refresh token
-      userInfo: {
+      user: {
         id: user.id,
         email: user.email,
         name: user.name,

@@ -40,7 +40,7 @@ export class UsersService {
 
   async findOne(id: number): Promise<User> {
     const result = await this.prisma.user.findUniqueOrThrow({
-      where: { id },
+      where: { id: id },
       include: { groups: true },
     });
 

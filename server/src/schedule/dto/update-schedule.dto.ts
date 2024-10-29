@@ -1,4 +1,4 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType } from '@nestjs/swagger';
 import { CreateScheduleDto } from './create-schedule.dto';
 import { Type } from 'class-transformer';
 import { IsInt } from 'class-validator';
