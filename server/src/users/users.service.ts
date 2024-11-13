@@ -1,20 +1,28 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Inject, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { PrismaService } from 'prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { salt } from 'src/constants/constants';
 
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Logger } from '@nestjs/common';
+
 // TODO: add try/catch where needed
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto) {
     const { password, groups, ...user } = createUserDto;
     const hash = await bcrypt.hash(password, salt);
 
+    await this.cacheManager.del('allUsers');
+    Logger.log("allUsers cache has been removed")
     return this.prisma.user.create({
       data: {
         ...user,
@@ -30,15 +38,26 @@ export class UsersService {
   }
 
   // TODO: add foltering, sorting, pagination
-  async findAll(): Promise<any[]> {
-    return await this.prisma.user.findMany({
-      include: {
-        groups: true,
-      },
-    });
+  async findAll() {
+    Logger.log('GET all users');
+    const value = await this.cacheManager.get('allUsers');
+
+    if (value) {
+      Logger.log('"allUsers" has been taken from cache');
+      return value;
+    } else {
+      const result = await this.prisma.user.findMany({
+        include: {
+          groups: true,
+        },
+      });
+      await this.cacheManager.set('allUsers', result);
+      Logger.log("'allUsers' has been cached");
+      return result;
+    }
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(id: number) {
     const result = await this.prisma.user.findUniqueOrThrow({
       where: { id },
       include: { groups: true },
@@ -75,6 +94,8 @@ export class UsersService {
       }),
     };
 
+    await this.cacheManager.del('allUsers');
+    Logger.log("allUsers cache has been removed")
     return await this.prisma.user.update({
       where: { id },
       data: updateData,
@@ -88,6 +109,9 @@ export class UsersService {
       await this.prisma.user.delete({
         where: { id },
       });
+
+      await this.cacheManager.del('allUsers');
+      Logger.log("allUsers cache has been removed")
     } catch {
       console.log(`Пользователь с ID ${id} не найден`);
     }
