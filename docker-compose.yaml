@@ -1,0 +1,65 @@
+services:
+
+  ui:
+    stdin_open: true #???
+    ports:
+      - '3000:3000'
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    networks:
+      - vocal-studio
+
+  server:
+    ports:
+      - '3008:3008'
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://yana:qwerty@postgres:5432/postgresql
+      - PORT=3008
+      - SALT=10
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - vocal-studio
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    ports:
+      - "5432:5432"
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: yana
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_DB: postgresql
+    networks:
+      - vocal-studio
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U yana -d postgresql"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    ports:
+      - '6379:6379'
+    image: redis:latest
+    container_name: redis
+    networks:
+      - vocal-studio
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  vocal-studio:
+    driver: bridge

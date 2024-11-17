@@ -1,5 +1,4 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
-import { Schedule } from '@prisma/client';
 import { CreateScheduleDto } from './dto/create-schedule.dto';
 import { UpdateScheduleDto } from './dto/update-schedule.dto';
 import { PrismaService } from 'prisma/prisma.service';
@@ -70,7 +69,7 @@ export class ScheduleService {
     return schedules;
   }
 
-  async findOne(id: number): Promise<Schedule> {
+  async findOne(id: number) {
     const result = await this.prisma.schedule.findUnique({
       where: { id },
       include: { groups: true },

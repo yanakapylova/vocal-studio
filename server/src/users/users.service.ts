@@ -2,8 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { PrismaService } from 'prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
-import { salt } from 'src/constants/constants';
+import * as bcrypt from 'bcryptjs';
 
 import { Cache } from 'cache-manager';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
@@ -19,7 +18,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     const { password, groups, ...user } = createUserDto;
-    const hash = await bcrypt.hash(password, salt);
+    const hash = await bcrypt.hash(password, process.env.SALT);
 
     await this.cacheManager.del('allUsers');
     Logger.log("allUsers cache has been removed")
